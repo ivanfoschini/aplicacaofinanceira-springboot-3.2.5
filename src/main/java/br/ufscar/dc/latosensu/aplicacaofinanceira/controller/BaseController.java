@@ -50,7 +50,7 @@ public class BaseController {
     public ResponseEntity<Map<String, Object>> handleValidationException(Exception exception, HttpServletRequest request) {
         ExceptionAttributes exceptionAttributes = new DefaultExceptionAttributes();
 
-        Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(ValidationUtil.errors, exception, request, HttpStatus.UNPROCESSABLE_ENTITY);
+        Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(((ValidationException) exception).getErrors(), exception, request, HttpStatus.UNPROCESSABLE_ENTITY);
 
         return new ResponseEntity<>(responseBody, HttpStatus.UNPROCESSABLE_ENTITY);
     }

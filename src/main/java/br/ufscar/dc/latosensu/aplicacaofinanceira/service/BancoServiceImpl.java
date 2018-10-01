@@ -56,9 +56,7 @@ public class BancoServiceImpl implements BancoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Banco save(Banco banco, BindingResult bindingResult) throws NotUniqueException, ValidationException {
-        if (bindingResult.hasErrors()) {
-            ValidationUtil.handleValidationErrors(bindingResult);
-        }               
+        new ValidationUtil().validate(bindingResult);               
         
         if (!isNumberUnique(banco.getNumero())) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
@@ -70,9 +68,7 @@ public class BancoServiceImpl implements BancoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Banco update(long id, Banco banco, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
-        if (bindingResult.hasErrors()) {
-            ValidationUtil.handleValidationErrors(bindingResult);
-        }   
+        new ValidationUtil().validate(bindingResult);   
         
         Banco bancoToUpdate = findById(id);
 

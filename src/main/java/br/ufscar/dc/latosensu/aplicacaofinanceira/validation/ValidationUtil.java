@@ -8,17 +8,17 @@ import org.springframework.validation.FieldError;
 
 public class ValidationUtil {
     
-    public static List<String> errors; 
-    
-    public static List handleValidationErrors(BindingResult bindingResult) throws ValidationException {
-        errors = new ArrayList();
+    public void validate(BindingResult bindingResult) throws ValidationException {
+        List<String> errors = new ArrayList();
         
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();            
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();            
 
-        for (FieldError error: fieldErrors) {
-            errors.add(error.getDefaultMessage());
+            for (FieldError error: fieldErrors) {
+                errors.add(error.getDefaultMessage());
+            }
+
+            throw new ValidationException(errors);
         }
-        
-        throw new ValidationException();
     }
 }
