@@ -5,7 +5,6 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.ValidationUtil;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

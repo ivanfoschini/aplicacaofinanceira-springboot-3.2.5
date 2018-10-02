@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ValidationException extends Exception {
 
-    List<String> errors = new ArrayList();
+    List<String> errors = new ArrayList<>();
     
     public List<String> getErrors() {
         return this.errors;

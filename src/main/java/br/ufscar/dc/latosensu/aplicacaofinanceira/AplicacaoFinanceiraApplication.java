@@ -10,10 +10,10 @@ public class AplicacaoFinanceiraApplication {
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("ValidationMessages", "i18n/messages");
-        source.setUseCodeAsDefaultMessage(true);
-        return source;
+        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
+        resourceBundleMessageSource.setBasenames("ValidationMessages", "i18n/messages");
+        resourceBundleMessageSource.setUseCodeAsDefaultMessage(true);
+        return resourceBundleMessageSource;
     }
 
     public static void main(String[] args) {

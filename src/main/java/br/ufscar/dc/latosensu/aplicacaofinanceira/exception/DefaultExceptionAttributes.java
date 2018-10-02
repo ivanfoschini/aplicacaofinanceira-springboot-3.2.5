@@ -31,7 +31,7 @@ public class DefaultExceptionAttributes implements ExceptionAttributes {
     }
 
     @Override
-    public Map<String, Object> getExceptionAttributes(List messages, Exception exception, HttpServletRequest httpRequest, HttpStatus httpStatus) {
+    public Map<String, Object> getExceptionAttributes(List<String> messages, Exception exception, HttpServletRequest httpRequest, HttpStatus httpStatus) {
         Map<String, Object> exceptionAttributes = new LinkedHashMap<>();
 
         addTimestamp(exceptionAttributes);
@@ -51,7 +51,7 @@ public class DefaultExceptionAttributes implements ExceptionAttributes {
         exceptionAttributes.put(MESSAGE, message);
     }
 
-    private void addExceptionDetail(Map<String, Object> exceptionAttributes, List messages, Exception exception) {
+    private void addExceptionDetail(Map<String, Object> exceptionAttributes, List<String> messages, Exception exception) {
         exceptionAttributes.put(EXCEPTION, exception.getClass().getName());
         exceptionAttributes.put(MESSAGES, messages);
     }
