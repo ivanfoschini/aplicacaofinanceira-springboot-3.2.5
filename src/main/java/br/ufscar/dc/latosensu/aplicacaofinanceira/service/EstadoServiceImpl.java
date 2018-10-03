@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -27,11 +28,15 @@ public class EstadoServiceImpl implements EstadoService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Estado estado = estadoRepository.findById(id);
 
         if (estado == null) {
             throw new NotFoundException(messageSource.getMessage("estadoNaoEncontrado", null, null));
+        }
+        
+        if (!estado.getCidades().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("estadoPossuiCidades", null, null));
         }
         
         estadoRepository.delete(estado);

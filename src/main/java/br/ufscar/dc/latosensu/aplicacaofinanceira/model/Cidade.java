@@ -1,43 +1,43 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.Collection;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "estado")
-public class Estado implements Serializable {
+@Table(name = "cidade")
+public class Cidade implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
     @Id
-    @SequenceGenerator(name = "Estado_Generator", sequenceName = "estado_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Estado_Generator")
-    @Column(name = "estado_id", nullable = false)
+    @SequenceGenerator(name = "Cidade_Generator", sequenceName = "cidade_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Cidade_Generator")
+    @Column(name = "cidade_id", nullable = false)
     private Long id;
     
-    @NotNull(message = "{estadoNomeNaoPodeSerNulo}")
-    @Size(min = 2, max = 255, message = "{estadoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
-    @Column(name = "nome", nullable = false, length = 255, unique = true)
+    @NotNull(message = "{cidadeNomeNaoPodeSerNulo}")
+    @Size(min = 2, max = 255, message = "{cidadeNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
+    @Column(name = "nome", nullable = false, length = 255)
     private String nome;
     
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado", fetch = FetchType.LAZY)
-    private Collection<Cidade> cidades;
+    @JsonIgnoreProperties({"nome", "cidades", "hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "estado_id", referencedColumnName = "estado_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Estado estado;
 
-    public Estado() {}
+    public Cidade() {}
 
     public Long getId() {
         return id;
@@ -54,13 +54,13 @@ public class Estado implements Serializable {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
-    public Collection<Cidade> getCidades() {
-        return cidades;
+
+    public Estado getEstado() {
+        return estado;
     }
 
-    public void setCidades(Collection<Cidade> cidades) {
-        this.cidades = cidades;
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     @Override
@@ -72,11 +72,11 @@ public class Estado implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Estado)) {
+        if (!(object instanceof Cidade)) {
             return false;
         }
         
-        Estado other = (Estado) object;
+        Cidade other = (Cidade) object;
         
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;

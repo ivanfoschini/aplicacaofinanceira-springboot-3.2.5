@@ -1,11 +1,10 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.service.EstadoService;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.service.CidadeService;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,34 +19,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/estado")
-public class EstadoController extends BaseController {
+@RequestMapping(value = "/cidade")
+public class CidadeController extends BaseController {
 
     @Autowired
-    private EstadoService estadoService;
+    private CidadeService cidadeService;
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
-        estadoService.delete(id);
+    public void delete(@PathVariable("id") long id) throws NotFoundException {
+        cidadeService.delete(id);
     }
 
     @GetMapping("/list")
-    public List<Estado> findAll() {
-        return estadoService.findAll();
+    public List<Cidade> findAll() {
+        return cidadeService.findAll();
     }
 
     @GetMapping("/show/{id}")
-    public Estado findById(@PathVariable("id") long id) throws NotFoundException {
-        return estadoService.findById(id);
+    public Cidade findById(@PathVariable("id") long id) throws NotFoundException {
+        return cidadeService.findById(id);
     }
 
     @PostMapping("/save")
-    public Estado save(@RequestBody @Valid Estado estado, BindingResult bindingResult) throws NotUniqueException, ValidationException {
-        return estadoService.save(estado, bindingResult);
+    public Cidade save(@RequestBody @Valid Cidade cidade, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
+        return cidadeService.save(cidade, bindingResult);
     }
 
     @PutMapping("/update/{id}")
-    public Estado update(@PathVariable("id") long id, @RequestBody @Valid Estado estado, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
-        return estadoService.update(id, estado, bindingResult);
+    public Cidade update(@PathVariable("id") long id, @RequestBody @Valid Cidade cidade, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
+        return cidadeService.update(id, cidade, bindingResult);
     }
 }
