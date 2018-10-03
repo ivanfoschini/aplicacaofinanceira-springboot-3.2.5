@@ -1,7 +1,9 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -49,6 +52,10 @@ public class Agencia implements Serializable {
     @JoinColumn(name = "banco_id", referencedColumnName = "banco_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Banco banco;
+    
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "agencia", fetch = FetchType.LAZY)
+    private Collection<Conta> contas;
     
     public Agencia() {}
 
@@ -90,6 +97,14 @@ public class Agencia implements Serializable {
 
     public void setBanco(Banco banco) {
         this.banco = banco;
+    }
+    
+    public Collection<Conta> getContas() {
+        return contas;
+    }
+
+    public void setContas(Collection<Conta> contas) {
+        this.contas = contas;
     }
 
     @Override
