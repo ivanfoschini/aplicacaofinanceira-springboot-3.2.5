@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -32,11 +33,15 @@ public class CidadeServiceImpl implements CidadeService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Cidade cidade = cidadeRepository.findById(id);
 
         if (cidade == null) {
             throw new NotFoundException(messageSource.getMessage("cidadeNaoEncontrada", null, null));
+        }
+        
+        if (!cidade.getEnderecos().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("cidadePossuiEnderecos", null, null));
         }
         
         cidadeRepository.delete(cidade);

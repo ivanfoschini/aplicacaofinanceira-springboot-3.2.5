@@ -1,11 +1,10 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.service.BancoService;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.service.AgenciaService;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,34 +19,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/banco")
-public class BancoController extends BaseController {
+@RequestMapping(value = "/agencia")
+public class AgenciaController extends BaseController {
 
     @Autowired
-    private BancoService bancoService;
+    private AgenciaService agenciaService;
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
-        bancoService.delete(id);
+    public void delete(@PathVariable("id") long id) throws NotFoundException {
+        agenciaService.delete(id);
     }
 
     @GetMapping("/list")
-    public List<Banco> findAll() {
-        return bancoService.findAll();
+    public List<Agencia> findAll() {
+        return agenciaService.findAll();
     }
 
     @GetMapping("/show/{id}")
-    public Banco findById(@PathVariable("id") long id) throws NotFoundException {
-        return bancoService.findById(id);
+    public Agencia findById(@PathVariable("id") long id) throws NotFoundException {
+        return agenciaService.findById(id);
     }
 
     @PostMapping("/save")
-    public Banco save(@RequestBody @Valid Banco banco, BindingResult bindingResult) throws NotUniqueException, ValidationException {
-        return bancoService.save(banco, bindingResult);
+    public Agencia save(@RequestBody @Valid Agencia agencia, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
+        return agenciaService.save(agencia, bindingResult);
     }
 
     @PutMapping("/update/{id}")
-    public Banco update(@PathVariable("id") long id, @RequestBody @Valid Banco banco, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
-        return bancoService.update(id, banco, bindingResult);
+    public Agencia update(@PathVariable("id") long id, @RequestBody @Valid Agencia agencia, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
+        return agenciaService.update(id, agencia, bindingResult);
     }
 }

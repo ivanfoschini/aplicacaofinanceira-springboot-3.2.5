@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -26,7 +27,7 @@ public class CidadeController extends BaseController {
     private CidadeService cidadeService;
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") long id) throws NotFoundException {
+    public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
         cidadeService.delete(id);
     }
 

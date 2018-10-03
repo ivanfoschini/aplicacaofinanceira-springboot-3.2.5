@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -27,11 +28,15 @@ public class BancoServiceImpl implements BancoService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Banco banco = bancoRepository.findById(id);
 
         if (banco == null) {
             throw new NotFoundException(messageSource.getMessage("bancoNaoEncontrado", null, null));
+        }
+        
+        if (!banco.getAgencias().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("bancoPossuiAgencias", null, null));
         }
         
         bancoRepository.delete(banco);
