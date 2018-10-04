@@ -1,14 +1,19 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.validation;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.ClientePessoaFisica;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Endereco;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -50,6 +55,30 @@ public class ValidationUtil {
             fieldErrors.addAll(enderecoFieldErrors);
             
             new ValidationUtil().validate(fieldErrors);
+        }
+    }
+
+    public void validateCidades(ClientePessoaFisica clientePessoaFisica, CidadeRepository cidadeRepository, MessageSource messageSource) throws NotFoundException, ValidationException {
+        for (Endereco endereco: clientePessoaFisica.getEnderecos()) {            
+            List<FieldError> enderecoFieldErrors = validateEndereco(endereco);
+
+            if (!enderecoFieldErrors.isEmpty()) {
+                List<FieldError> fieldErrors = new ArrayList<>(); 
+
+                fieldErrors.addAll(enderecoFieldErrors);
+
+                new ValidationUtil().validate(fieldErrors);
+            }
+            
+            if (endereco.getCidade() != null) {            
+                Cidade cidade = cidadeRepository.findById(endereco.getCidade().getId().longValue());
+
+                if (cidade == null) {
+                    throw new NotFoundException(messageSource.getMessage("cidadeNaoEncontrada", null, null));
+                }        
+            } else {
+                throw new NotFoundException(messageSource.getMessage("cidadeNaoEncontrada", null, null));
+            }
         }
     }    
     

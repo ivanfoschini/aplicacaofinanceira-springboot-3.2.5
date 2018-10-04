@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttributes;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
@@ -18,6 +19,15 @@ public class BaseController {
     
     @Autowired
     private MessageSource messageSource;
+    
+    @ExceptionHandler(EmptyCollectionException.class)
+    public ResponseEntity<Map<String, Object>> handleEmptyCollectionException(Exception exception, HttpServletRequest request) {
+        ExceptionAttributes exceptionAttributes = new DefaultExceptionAttributes();
+
+        Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(exception.getMessage(), exception, request, HttpStatus.UNPROCESSABLE_ENTITY);
+
+        return new ResponseEntity<>(responseBody, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception exception, HttpServletRequest request) {

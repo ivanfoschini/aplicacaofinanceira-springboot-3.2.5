@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.Cep;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
@@ -55,6 +56,7 @@ public class Endereco implements Serializable {
     @Column(name = "cep", nullable = false, length = 9)
     private String cep;
     
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "endereco", fetch = FetchType.LAZY)
     private Agencia agencia;
     
@@ -62,6 +64,11 @@ public class Endereco implements Serializable {
     @JoinColumn(name = "cidade_id", referencedColumnName = "cidade_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Cidade cidade;
+    
+    @JsonIgnore
+    @JoinColumn(name = "cliente_id", referencedColumnName = "cliente_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cliente cliente;
 
     public Endereco() {}
 
@@ -129,6 +136,14 @@ public class Endereco implements Serializable {
         this.cidade = cidade;
     }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
