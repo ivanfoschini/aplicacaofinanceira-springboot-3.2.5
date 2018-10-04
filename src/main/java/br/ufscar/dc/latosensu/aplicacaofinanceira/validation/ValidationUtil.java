@@ -4,7 +4,7 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.ClientePessoaFisica;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cliente;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Endereco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import java.util.ArrayList;
@@ -58,8 +58,8 @@ public class ValidationUtil {
         }
     }
 
-    public void validateCidades(ClientePessoaFisica clientePessoaFisica, CidadeRepository cidadeRepository, MessageSource messageSource) throws NotFoundException, ValidationException {
-        for (Endereco endereco: clientePessoaFisica.getEnderecos()) {            
+    public void validateCidades(Cliente cliente, CidadeRepository cidadeRepository, MessageSource messageSource) throws NotFoundException, ValidationException {
+        for (Endereco endereco: cliente.getEnderecos()) {            
             List<FieldError> enderecoFieldErrors = validateEndereco(endereco);
 
             if (!enderecoFieldErrors.isEmpty()) {
