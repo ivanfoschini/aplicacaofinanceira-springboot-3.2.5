@@ -1,8 +1,11 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -14,6 +17,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -50,6 +54,10 @@ public abstract class Conta implements Serializable {
     @JoinColumn(name = "agencia_id", referencedColumnName = "agencia_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Agencia agencia;
+    
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "conta", fetch = FetchType.LAZY)
+    private Collection<Correntista> correntistas;
         
     public Conta() {}
 
@@ -91,6 +99,14 @@ public abstract class Conta implements Serializable {
 
     public void setAgencia(Agencia agencia) {
         this.agencia = agencia;
+    }
+    
+    public Collection<Correntista> getCorrentistas() {
+        return correntistas;
+    }
+
+    public void setCorrentistas(Collection<Correntista> correntistas) {
+        this.correntistas = correntistas;
     }
 
     @Override
