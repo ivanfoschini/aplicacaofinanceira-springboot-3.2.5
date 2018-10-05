@@ -11,6 +11,7 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ClientePessoaFisicaRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.EnderecoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.ValidationUtil;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -109,17 +110,23 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
         clientePessoaFisicaToUpdate.setRg(clientePessoaFisica.getRg());
         clientePessoaFisicaToUpdate.setCpf(clientePessoaFisica.getCpf());
         
+        List<Endereco> enderecosToRemove = new ArrayList<>();
+        
         for (Endereco endereco: clientePessoaFisicaToUpdate.getEnderecos()) {
+            enderecosToRemove.add(endereco);
             enderecoRepository.delete(endereco);
         }
         
-        ClientePessoaFisica updatedPessoaFisica = clientePessoaFisicaRepository.save(clientePessoaFisicaToUpdate);
+        for (Endereco endereco: enderecosToRemove) {
+            clientePessoaFisicaToUpdate.getEnderecos().remove(endereco);
+        }
         
         for (Endereco endereco: clientePessoaFisica.getEnderecos()) {
             endereco.setCliente(clientePessoaFisicaToUpdate);
+            clientePessoaFisicaToUpdate.getEnderecos().add(endereco);
             enderecoRepository.save(endereco);
         }
-
-        return updatedPessoaFisica;
+        
+        return clientePessoaFisicaRepository.save(clientePessoaFisicaToUpdate);
     }
 }

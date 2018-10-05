@@ -11,6 +11,7 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ClientePessoaJuridicaRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.EnderecoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.ValidationUtil;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -108,17 +109,23 @@ public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaSe
         clientePessoaJuridicaToUpdate.setStatus(clientePessoaJuridica.getStatus());
         clientePessoaJuridicaToUpdate.setCnpj(clientePessoaJuridica.getCnpj());
         
+        List<Endereco> enderecosToRemove = new ArrayList<>();
+        
         for (Endereco endereco: clientePessoaJuridicaToUpdate.getEnderecos()) {
+            enderecosToRemove.add(endereco);
             enderecoRepository.delete(endereco);
         }
         
-        ClientePessoaJuridica updatedPessoaJuridica = clientePessoaJuridicaRepository.save(clientePessoaJuridicaToUpdate);
+        for (Endereco endereco: enderecosToRemove) {
+            clientePessoaJuridicaToUpdate.getEnderecos().remove(endereco);
+        }
         
         for (Endereco endereco: clientePessoaJuridica.getEnderecos()) {
             endereco.setCliente(clientePessoaJuridicaToUpdate);
+            clientePessoaJuridicaToUpdate.getEnderecos().add(endereco);
             enderecoRepository.save(endereco);
         }
-
-        return updatedPessoaJuridica;
+        
+        return clientePessoaJuridicaRepository.save(clientePessoaJuridicaToUpdate);
     }
 }
