@@ -6,12 +6,8 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Servico;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Usuario;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ServicoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.UsuarioRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.math.BigInteger;
-import java.security.MessageDigest;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.security.SecurityUtil;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -20,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-public class UsuarioServiceImpl implements UsuarioService {   
-    
-    private static final String JWT_TOKEN_KEY = "LATOSENSU";
-    private static final Long JWT_TOKEN_EXPIRATION_TIME = 86400000L; //Um dia em milisegundos      
+public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private ServicoRepository servicoRepository;
@@ -36,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     
     @Override
     public boolean autorizar(String requestUri, String token) {
-        String nomeDeUsuario = getNomeDeUsuario(token);
+        String nomeDeUsuario = new SecurityUtil().getNomeDeUsuario(token);
         Usuario usuario = usuarioRepository.findByNomeDeUsuario(nomeDeUsuario);
         Servico servico = servicoRepository.findByUri(requestUri);
         
@@ -55,44 +48,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     
     @Override
     public String login(String nomeDeUsuario, String senha) throws NotFoundException, NoSuchAlgorithmException {
-        if (senha == null) {
+        SecurityUtil securityUtil = new SecurityUtil();
+        
+        if (nomeDeUsuario == null || senha == null) {
             throw new NotFoundException(messageSource.getMessage("usuarioNaoEncontrado", null, null));
         }
         
-        Usuario usuario = usuarioRepository.findByNomeDeUsuarioAndSenha(nomeDeUsuario, generateMD5(senha));
+        Usuario usuario = usuarioRepository.findByNomeDeUsuarioAndSenha(nomeDeUsuario, securityUtil.generateMD5(senha));
 
         if (usuario == null) {
             throw new NotFoundException(messageSource.getMessage("usuarioNaoEncontrado", null, null));
         }        
         
-        return getToken(usuario);
-    }
-    
-    private String getNomeDeUsuario(String token) {
-        return Jwts.parser()
-                .setSigningKey(JWT_TOKEN_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();   
-    }
-    
-    private String getToken(Usuario usuario) {
-        long nowMilliSeconds = System.currentTimeMillis();
-        long expirationTime = JWT_TOKEN_EXPIRATION_TIME.longValue();
-        Date now = new Date(nowMilliSeconds);
-
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, JWT_TOKEN_KEY)
-                .setExpiration(new Date(nowMilliSeconds + expirationTime))
-                .setIssuedAt(now)
-                .setSubject(usuario.getNomeDeUsuario())
-                .compact();
-    }
-    
-    private String generateMD5(String text) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        messageDigest.update(text.getBytes(), 0, text.length());
-        
-        return new BigInteger(1, messageDigest.digest()).toString(16);
+        return securityUtil.getToken(usuario);
     }
 }
