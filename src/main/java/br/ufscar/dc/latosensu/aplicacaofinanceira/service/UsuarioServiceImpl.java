@@ -60,6 +60,6 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new NotFoundException(messageSource.getMessage("usuarioNaoEncontrado", null, null));
         }        
         
-        return securityUtil.getToken(usuario);
+        return securityUtil.getToken(usuario.getNomeDeUsuario());
     }
 }
