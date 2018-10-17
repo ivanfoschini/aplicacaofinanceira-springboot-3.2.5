@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -31,11 +32,15 @@ public class ContaCorrenteServiceImpl implements ContaCorrenteService {
     private MessageSource messageSource;
     
     @Override
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Conta conta = contaCorrenteRepository.findById(id);
 
         if (conta == null || !(conta instanceof ContaCorrente)) {
             throw new NotFoundException(messageSource.getMessage("contaNaoEncontrada", null, null));
+        }
+        
+        if (!conta.getCorrentistas().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("contaPossuiCorrentista", null, null));
         }
         
         contaCorrenteRepository.delete((ContaCorrente) conta);

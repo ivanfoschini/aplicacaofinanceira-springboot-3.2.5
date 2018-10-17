@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -37,12 +38,16 @@ public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaSe
     private MessageSource messageSource;
 
     @Override
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Cliente cliente = clientePessoaJuridicaRepository.findById(id);
 
         if (cliente == null || !(cliente instanceof ClientePessoaJuridica)) {
             throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));
         }
+        
+        if (!cliente.getCorrentistas().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("clienteEhCorrentista", null, null));
+        } 
         
         for (Endereco endereco: cliente.getEnderecos()) {
             enderecoRepository.delete(endereco);

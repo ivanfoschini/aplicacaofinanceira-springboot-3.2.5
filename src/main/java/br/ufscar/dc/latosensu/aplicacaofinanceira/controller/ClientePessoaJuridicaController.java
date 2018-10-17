@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -27,7 +28,7 @@ public class ClientePessoaJuridicaController extends BaseController {
     private ClientePessoaJuridicaService clientePessoaJuridicaService;
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") long id) throws NotFoundException {
+    public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
         clientePessoaJuridicaService.delete(id);
     }
 
