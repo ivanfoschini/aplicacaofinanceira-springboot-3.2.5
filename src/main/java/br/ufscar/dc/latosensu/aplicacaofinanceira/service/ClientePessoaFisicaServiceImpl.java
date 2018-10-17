@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -17,12 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaService {
 
     @Autowired
@@ -38,13 +38,16 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Cliente cliente = clientePessoaFisicaRepository.findById(id);
 
         if (cliente == null || !(cliente instanceof ClientePessoaFisica)) {
             throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));
         }
+        
+        if (!cliente.getCorrentistas().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("clienteEhCorrentista", null, null));
+        } 
         
         for (Endereco endereco: cliente.getEnderecos()) {
             enderecoRepository.delete(endereco);
@@ -70,7 +73,6 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaFisica save(ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);
@@ -90,7 +92,6 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaFisica update(long id, ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);
