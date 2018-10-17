@@ -59,6 +59,24 @@ public class InsertBancoIntegrationTest extends BaseIntegrationTest {
     }
     
     @Test
+    public void testSaveSemToken() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
+        
+        String inputJson = super.mapToJson(banco);
+
+        MvcResult result = mockMvc
+                .perform(MockMvcRequestBuilders.post(uri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)                                                
+                        .content(inputJson))                
+                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+    }
+    
+    @Test
     public void testSaveComUsuarioFuncionario() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
         

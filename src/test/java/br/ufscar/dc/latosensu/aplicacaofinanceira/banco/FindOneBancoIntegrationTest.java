@@ -59,6 +59,24 @@ public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
     }
     
     @Test
+    public void testFindOneSemToken() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
+        
+        bancoRepository.save(banco);
+        
+        Long id = banco.getId();
+        
+        MvcResult result = mockMvc
+                .perform(MockMvcRequestBuilders.get(uri, id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+    }
+    
+    @Test
     public void testFindOneComBancoInexistente() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
         

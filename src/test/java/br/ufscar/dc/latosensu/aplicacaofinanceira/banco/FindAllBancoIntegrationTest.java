@@ -50,7 +50,23 @@ public class FindAllBancoIntegrationTest extends BaseIntegrationTest {
         int status = result.getResponse().getStatus();
         
         Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
-    }    
+    }
+
+//    @Test
+//    public void testFindAllSemToken() throws Exception {
+//        Banco banco = BancoTestUtil.bancoDoBrasil();
+//        
+//        bancoRepository.save(banco);
+//        
+//        MvcResult result = mockMvc
+//                .perform(MockMvcRequestBuilders.get(uri)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andReturn();
+//
+//        int status = result.getResponse().getStatus();
+//        
+//        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+//    }    
     
     @Test
     public void testFindAllComSucessoParaAdmin() throws Exception {

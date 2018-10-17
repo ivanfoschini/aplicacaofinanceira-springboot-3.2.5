@@ -61,6 +61,28 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
     }
+    
+    @Test
+    public void testUpdateSemToken() throws Exception {
+        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+        
+        bancoRepository.save(bancoDoBrasil);
+        
+        Long id = bancoDoBrasil.getId();
+        
+        String inputJson = super.mapToJson(bancoDoBrasil);
+
+        MvcResult result = mockMvc
+                .perform(MockMvcRequestBuilders.put(uri, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(inputJson))                
+                .andReturn();
+
+        int status = result.getResponse().getStatus();
+        
+        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+    }
 
     @Test
     public void testUpdateComUsuarioFuncionario() throws Exception {
