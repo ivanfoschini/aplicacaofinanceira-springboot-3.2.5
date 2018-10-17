@@ -15,12 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class AgenciaServiceImpl implements AgenciaService {
     
     @Autowired
@@ -36,7 +35,6 @@ public class AgenciaServiceImpl implements AgenciaService {
     private MessageSource messageSource;
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Agencia agencia = agenciaRepository.findById(id);
 
@@ -64,7 +62,6 @@ public class AgenciaServiceImpl implements AgenciaService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Agencia save(Agencia agencia, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validateAgenciaAndEndereco(agencia, bindingResult);
         validateBanco(agencia);
@@ -78,7 +75,6 @@ public class AgenciaServiceImpl implements AgenciaService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Agencia update(long id, Agencia agencia, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validateAgenciaAndEndereco(agencia, bindingResult);   
         validateBanco(agencia);

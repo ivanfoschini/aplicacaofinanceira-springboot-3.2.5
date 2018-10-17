@@ -12,12 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class BancoServiceImpl implements BancoService {
 
     @Autowired
@@ -27,7 +26,6 @@ public class BancoServiceImpl implements BancoService {
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Banco banco = bancoRepository.findById(id);
 
@@ -59,7 +57,6 @@ public class BancoServiceImpl implements BancoService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Banco save(Banco banco, BindingResult bindingResult) throws NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);               
         
@@ -71,7 +68,6 @@ public class BancoServiceImpl implements BancoService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Banco update(long id, Banco banco, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         
