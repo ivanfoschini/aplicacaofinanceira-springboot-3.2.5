@@ -11,12 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class EstadoServiceImpl implements EstadoService {
 
     @Autowired
@@ -26,7 +25,6 @@ public class EstadoServiceImpl implements EstadoService {
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Estado estado = estadoRepository.findById(id);
 
@@ -54,7 +52,6 @@ public class EstadoServiceImpl implements EstadoService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Estado save(Estado estado, BindingResult bindingResult) throws NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);               
         
@@ -66,7 +63,6 @@ public class EstadoServiceImpl implements EstadoService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Estado update(long id, Estado estado, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         
