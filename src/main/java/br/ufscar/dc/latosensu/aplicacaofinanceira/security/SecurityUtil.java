@@ -21,7 +21,7 @@ public class SecurityUtil {
                 .getSubject();   
     }
     
-    public String getToken(Usuario usuario) {
+    public String getToken(String nomeDeUsuario) {
         long nowMilliSeconds = System.currentTimeMillis();
         long expirationTime = JWT_TOKEN_EXPIRATION_TIME.longValue();
         Date now = new Date(nowMilliSeconds);
@@ -30,7 +30,7 @@ public class SecurityUtil {
                 .signWith(SignatureAlgorithm.HS256, JWT_TOKEN_KEY)
                 .setExpiration(new Date(nowMilliSeconds + expirationTime))
                 .setIssuedAt(now)
-                .setSubject(usuario.getNomeDeUsuario())
+                .setSubject(nomeDeUsuario)
                 .compact();
     }
     
