@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
@@ -14,12 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class ContaCorrenteServiceImpl implements ContaCorrenteService {
     
     @Autowired
@@ -32,12 +32,15 @@ public class ContaCorrenteServiceImpl implements ContaCorrenteService {
     private MessageSource messageSource;
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void delete(long id) throws NotFoundException {
+    public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Conta conta = contaCorrenteRepository.findById(id);
 
         if (conta == null || !(conta instanceof ContaCorrente)) {
             throw new NotFoundException(messageSource.getMessage("contaNaoEncontrada", null, null));
+        }
+        
+        if (!conta.getCorrentistas().isEmpty()) {
+            throw new NotEmptyCollectionException(messageSource.getMessage("contaPossuiCorrentista", null, null));
         }
         
         contaCorrenteRepository.delete((ContaCorrente) conta);
@@ -60,7 +63,6 @@ public class ContaCorrenteServiceImpl implements ContaCorrenteService {
     }
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ContaCorrente save(ContaCorrente contaCorrente, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         validateAgencia(contaCorrente);
@@ -73,7 +75,6 @@ public class ContaCorrenteServiceImpl implements ContaCorrenteService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ContaCorrente update(long id, ContaCorrente contaCorrente, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         validateAgencia(contaCorrente);
