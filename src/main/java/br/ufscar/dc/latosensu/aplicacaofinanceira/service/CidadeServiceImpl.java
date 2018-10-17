@@ -13,12 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class CidadeServiceImpl implements CidadeService {
 
     @Autowired
@@ -31,7 +30,6 @@ public class CidadeServiceImpl implements CidadeService {
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Cidade cidade = cidadeRepository.findById(id);
 
@@ -59,7 +57,6 @@ public class CidadeServiceImpl implements CidadeService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Cidade save(Cidade cidade, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);               
         
@@ -73,7 +70,6 @@ public class CidadeServiceImpl implements CidadeService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public Cidade update(long id, Cidade cidade, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         
