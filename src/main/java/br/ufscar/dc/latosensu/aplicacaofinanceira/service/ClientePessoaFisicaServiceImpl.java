@@ -17,12 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaService {
 
     @Autowired
@@ -38,7 +37,6 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Cliente cliente = clientePessoaFisicaRepository.findById(id);
 
@@ -70,7 +68,6 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaFisica save(ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);
@@ -90,7 +87,6 @@ public class ClientePessoaFisicaServiceImpl implements ClientePessoaFisicaServic
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaFisica update(long id, ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);

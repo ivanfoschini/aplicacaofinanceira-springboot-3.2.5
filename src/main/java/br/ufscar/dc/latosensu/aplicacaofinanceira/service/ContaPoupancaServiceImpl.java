@@ -14,12 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class ContaPoupancaServiceImpl implements ContaPoupancaService {
     
     @Autowired
@@ -32,7 +31,6 @@ public class ContaPoupancaServiceImpl implements ContaPoupancaService {
     private MessageSource messageSource;
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Conta conta = contaPoupancaRepository.findById(id);
 
@@ -60,7 +58,6 @@ public class ContaPoupancaServiceImpl implements ContaPoupancaService {
     }
     
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ContaPoupanca save(ContaPoupanca contaPoupanca, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         validateAgencia(contaPoupanca);
@@ -73,7 +70,6 @@ public class ContaPoupancaServiceImpl implements ContaPoupancaService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ContaPoupanca update(long id, ContaPoupanca contaPoupanca, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         validateAgencia(contaPoupanca);

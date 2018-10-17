@@ -17,12 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaService {
 
     @Autowired
@@ -38,7 +37,6 @@ public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaSe
     private MessageSource messageSource;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(long id) throws NotFoundException {
         Cliente cliente = clientePessoaJuridicaRepository.findById(id);
 
@@ -70,7 +68,6 @@ public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaSe
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaJuridica save(ClientePessoaJuridica clientePessoaJuridica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);
         new ValidationUtil().validateCidades(clientePessoaJuridica, cidadeRepository, messageSource);
@@ -90,7 +87,6 @@ public class ClientePessoaJuridicaServiceImpl implements ClientePessoaJuridicaSe
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ClientePessoaJuridica update(long id, ClientePessoaJuridica clientePessoaJuridica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
         new ValidationUtil().validate(bindingResult);   
         new ValidationUtil().validateCidades(clientePessoaJuridica, cidadeRepository, messageSource);
