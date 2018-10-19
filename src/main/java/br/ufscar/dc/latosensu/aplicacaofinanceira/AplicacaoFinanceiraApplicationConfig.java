@@ -17,15 +17,15 @@ public class AplicacaoFinanceiraApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry
                 .addInterceptor(autorizacaoInterceptor)
-                .addPathPatterns("/agencia/*")
-                .addPathPatterns("/banco/*")
-                .addPathPatterns("/cidade/*")
-                .addPathPatterns("/clientePessoaFisica/*")
-                .addPathPatterns("/clientePessoaJuridica/*")
-                .addPathPatterns("/contaCorrente/*")
-                .addPathPatterns("/contaPoupanca/*")
-                .addPathPatterns("/correntista/*")
-                .addPathPatterns("/estado/*")
+                .addPathPatterns("/agencia/**")
+                .addPathPatterns("/banco/**")
+                .addPathPatterns("/cidade/**")
+                .addPathPatterns("/clientePessoaFisica/**")
+                .addPathPatterns("/clientePessoaJuridica/**")
+                .addPathPatterns("/contaCorrente/**")
+                .addPathPatterns("/contaPoupanca/**")
+                .addPathPatterns("/correntista/**")
+                .addPathPatterns("/estado/**")
                 .pathMatcher(new AntPathMatcher());
     }    
 }
