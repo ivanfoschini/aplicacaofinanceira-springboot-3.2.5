@@ -144,9 +144,3 @@ INSERT INTO public.papel_servico (papel_id, servico_id) VALUES(1, 43);
 
 INSERT INTO public.papel_servico (papel_id, servico_id) VALUES(2, 42);
 INSERT INTO public.papel_servico (papel_id, servico_id) VALUES(2, 43);
-
-INSERT INTO public.servico (servico_id, uri) VALUES(44, '/logout/logout');
-
-INSERT INTO public.papel_servico (papel_id, servico_id) VALUES(1, 44);
-
-INSERT INTO public.papel_servico (papel_id, servico_id) VALUES(2, 44);
