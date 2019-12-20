@@ -37,7 +37,7 @@ public class BancoServiceImpl implements BancoService {
 
     @Override
     public List<Banco> findAll() {
-        return bancoRepository.findAll(new Sort(Sort.Direction.ASC, "nome"));
+        return bancoRepository.findAll(Sort.by("nome"));
     }    
 
     @Override
