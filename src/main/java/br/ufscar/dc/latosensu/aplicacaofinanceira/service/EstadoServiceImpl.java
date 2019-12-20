@@ -37,7 +37,7 @@ public class EstadoServiceImpl implements EstadoService {
 
     @Override
     public List<Estado> findAll() {
-        return estadoRepository.findAll(new Sort(Sort.Direction.ASC, "nome"));
+        return estadoRepository.findAll(Sort.by("nome"));
     }    
 
     @Override
