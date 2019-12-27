@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class Servico implements Serializable {
     @Column(name = "uri", nullable = false, unique = true, length = 255)
     private String uri;
     
-    @ManyToMany(mappedBy="servicos", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="servicos", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Papel> papeis;
 
     public Long getId() {

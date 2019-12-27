@@ -13,7 +13,7 @@ import javax.validation.Payload;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cnpj {
-    public static final String DEFAULT_MESSAGE = "O CNPJ fornecido é inválido";
+    public static final String DEFAULT_MESSAGE = "O CNPJ fornecido e invalido";
     
     String message() default DEFAULT_MESSAGE;
     Class<?>[] groups() default { };
