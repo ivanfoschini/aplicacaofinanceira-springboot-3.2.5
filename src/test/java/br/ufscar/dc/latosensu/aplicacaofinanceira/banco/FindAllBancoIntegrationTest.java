@@ -6,6 +6,7 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.security.SecurityUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.BancoTestUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.TestUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
