@@ -43,15 +43,6 @@ public class BaseController {
         return new ResponseEntity<>(responseBody, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception exception, HttpServletRequest request) {
-        ExceptionAttributes exceptionAttributes = new DefaultExceptionAttributes();
-
-        Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(messageSource.getMessage("generalInternalServerError", null, null), exception, request, HttpStatus.INTERNAL_SERVER_ERROR);
-
-        return new ResponseEntity<>(responseBody, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadableException(Exception exception, HttpServletRequest request) {
         ExceptionAttributes exceptionAttributes = new DefaultExceptionAttributes();
