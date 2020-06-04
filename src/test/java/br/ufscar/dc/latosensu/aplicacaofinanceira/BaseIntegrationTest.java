@@ -1,44 +1,37 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-@WebAppConfiguration
 public class BaseIntegrationTest {
-
-    protected MockMvc mockMvc;
-
+    
     @Autowired
-    protected WebApplicationContext webApplicationContext;
-
-    protected void setUp() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)                
-                .build();
-    }
-
-    protected String mapToJson(Object object) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(object);
-    }
-
-    protected <T> T mapFromJsonObject(String json, Class<T> clazz) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, clazz);
+    protected MockMvc mockMvc;
+    
+    protected List<String> getErrorsMessages(JsonArray errors) {
+        List<String> errorsMessages = new ArrayList<>();
+        
+        for (int i = 0; i < errors.size(); i++) {
+            errorsMessages.add(errors.get(i).getAsString());
+        }
+        
+        return errorsMessages;
     }
     
-    protected <T> T mapFromJsonArray(String array) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();        
-        TypeReference<List<Object>> mapType = new TypeReference<List<Object>>() {};
-    	
-        return objectMapper.readValue(array, mapType);        
+    protected String objectToString(Object object) {
+        return new Gson().toJson(object);
+    }
+    
+    protected JsonArray stringToJsonArray(String string) {
+        return new Gson().fromJson(string, JsonArray.class);
+    }
+    
+    protected JsonObject stringToJsonObject(String string) {
+        return new Gson().fromJson(string, JsonObject.class);
     }    
 }

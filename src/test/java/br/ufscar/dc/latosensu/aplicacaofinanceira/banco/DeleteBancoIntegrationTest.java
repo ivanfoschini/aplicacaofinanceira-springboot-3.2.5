@@ -1,44 +1,40 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.banco;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.BaseIntegrationTest;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.deserializer.ErrorResponseDeserializer;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.security.SecurityUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.BancoTestUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.TestUtil;
+import com.google.gson.JsonObject;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;    
+
 @SpringBootTest
+@AutoConfigureMockMvc
 @Transactional
 public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
  
-    private String uri = BancoTestUtil.BANCO_DELETE_URI + TestUtil.ID_COMPLEMENT_URI;
+    private final String uri = BancoTestUtil.BANCO_DELETE_URI + TestUtil.ID_COMPLEMENT_URI;
     
     @Autowired
     private BancoRepository bancoRepository;
     
     @Autowired
     private MessageSource messageSource;
-    
-    @Before
-    public void setUp() {
-        super.setUp();
-    }
     
     @Test
     public void testDeleteComUsuarioNaoAutorizado() throws Exception {
@@ -48,15 +44,10 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = banco.getId();
         
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.delete(uri, id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO)))                 
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(delete(uri, id)
+                    .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO)))                 
+            .andExpect(status().isUnauthorized());
     }
     
     @Test
@@ -67,14 +58,9 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = banco.getId();
         
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.delete(uri, id)
-                        .accept(MediaType.APPLICATION_JSON))                 
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(delete(uri, id))                 
+            .andExpect(status().isUnauthorized());
     }
     
     @Test
@@ -85,15 +71,10 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = banco.getId();
         
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.delete(uri, id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO)))                 
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(delete(uri, id)
+                    .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO)))                 
+            .andExpect(status().isUnauthorized());
     }
     
     @Test
@@ -102,20 +83,16 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         bancoRepository.save(banco);
         
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.delete(uri, 0)
-                        .accept(MediaType.APPLICATION_JSON)
+        MvcResult mvcResult = mockMvc
+                .perform(delete(uri, 0)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN)))
+                .andExpect(status().isNotFound())
                 .andReturn();
+        
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
 
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString(); 
-        
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
-        
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), status);
-        Assert.assertEquals(TestUtil.NOT_FOUND_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNaoEncontrado", null, null), errorResponseDeserializer.getMessage());
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.NOT_FOUND_EXCEPTION);
+        assertEquals(response.get(DefaultExceptionAttributes.MESSAGE).getAsString(), messageSource.getMessage("bancoNaoEncontrado", null, null));
     } 
     
     @Test
@@ -127,14 +104,10 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = banco.getId();
         
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.delete(uri, id)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))) 
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.OK.value(), status);        
+        mockMvc
+            .perform(delete(uri, id)
+                    .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN)))
+            .andExpect(status().isOk())
+            .andReturn();
     }
 }

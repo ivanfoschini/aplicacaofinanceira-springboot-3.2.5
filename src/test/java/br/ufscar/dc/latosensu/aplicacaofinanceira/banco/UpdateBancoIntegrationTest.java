@@ -1,43 +1,44 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.banco;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.BaseIntegrationTest;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.deserializer.ErrorResponseDeserializer;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.security.SecurityUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.BancoTestUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.TestUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import java.nio.charset.Charset;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
+@AutoConfigureMockMvc
 @Transactional
 public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
 
-    private String uri = BancoTestUtil.BANCO_UPDATE_URI + TestUtil.ID_COMPLEMENT_URI;
+    private final String uri = BancoTestUtil.BANCO_UPDATE_URI + TestUtil.ID_COMPLEMENT_URI;
     
     @Autowired
     private BancoRepository bancoRepository;
     
     @Autowired
     private MessageSource messageSource;
-    
-    @Before
-    public void setUp() {
-        super.setUp();
-    }
     
     @Test
     public void testUpdateComUsuarioNaoAutorizado() throws Exception {
@@ -47,19 +48,14 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = bancoDoBrasil.getId();
         
-        String inputJson = super.mapToJson(bancoDoBrasil);
+        String inputJson = objectToString(bancoDoBrasil);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO))
-                        .content(inputJson))                
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(put(uri, id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO))
+                    .content(inputJson))                
+            .andExpect(status().isUnauthorized());
     }
     
     @Test
@@ -70,18 +66,13 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = bancoDoBrasil.getId();
         
-        String inputJson = super.mapToJson(bancoDoBrasil);
+        String inputJson = objectToString(bancoDoBrasil);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(inputJson))                
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(put(uri, id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(inputJson))                
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -92,19 +83,14 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = bancoDoBrasil.getId();
         
-        String inputJson = super.mapToJson(bancoDoBrasil);
+        String inputJson = objectToString(bancoDoBrasil);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO))
-                        .content(inputJson))                
-                .andReturn();
-
-        int status = result.getResponse().getStatus();
-        
-        Assert.assertEquals(HttpStatus.UNAUTHORIZED.value(), status);
+        mockMvc
+            .perform(put(uri, id)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO))
+                    .content(inputJson))                
+            .andExpect(status().isUnauthorized());
     }  
     
     @Test
@@ -117,28 +103,30 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco bancoSemCamposObrigatorios = BancoTestUtil.bancoSemCamposObrigatorios();
         
-        String inputJson = super.mapToJson(bancoSemCamposObrigatorios);
+        String inputJson = objectToString(bancoSemCamposObrigatorios);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.VALIDATION_EXCEPTION, errorResponseDeserializer.getException());
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
         
-        Assert.assertTrue(errorResponseDeserializer.getMessages().contains(messageSource.getMessage("bancoCnpjNaoPodeSerNulo", null, null)));
-        Assert.assertTrue(errorResponseDeserializer.getMessages().contains(messageSource.getMessage("bancoCnpjInvalido", null, null)));
-        Assert.assertTrue(errorResponseDeserializer.getMessages().contains(messageSource.getMessage("bancoNomeNaoPodeSerNulo", null, null)));
-        Assert.assertTrue(errorResponseDeserializer.getMessages().contains(messageSource.getMessage("bancoNumeroDeveSerMaiorDoQueZero", null, null)));
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.VALIDATION_EXCEPTION);
+        
+        JsonArray errors = response.get(DefaultExceptionAttributes.MESSAGES).getAsJsonArray();
+        
+        assertEquals(errors.size(), 4);
+        
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+        
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoCnpjInvalido", null, null)));
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoCnpjNaoPodeSerNulo", null, null)));
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNomeNaoPodeSerNulo", null, null)));
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNumeroDeveSerMaiorDoQueZero", null, null)));
     }
     
     @Test
@@ -151,24 +139,27 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco bancoComNumeroMenorDoQueUm = BancoTestUtil.bancoComNumeroMenorDoQueUm();
         
-        String inputJson = super.mapToJson(bancoComNumeroMenorDoQueUm);
+        String inputJson = objectToString(bancoComNumeroMenorDoQueUm);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())                
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.VALIDATION_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNumeroDeveSerMaiorDoQueZero", null, null), errorResponseDeserializer.getMessages().get(0));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.VALIDATION_EXCEPTION);
+        
+        JsonArray errors = response.get(DefaultExceptionAttributes.MESSAGES).getAsJsonArray();
+        
+        assertEquals(errors.size(), 1);
+        
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+        
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNumeroDeveSerMaiorDoQueZero", null, null)));
     }
     
     @Test
@@ -181,24 +172,20 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Long id = caixaEconomicaFederal.getId();
         
-        String inputJson = super.mapToJson(bancoDoBrasil);
+        String inputJson = objectToString(bancoDoBrasil);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.NOT_UNIQUE_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null), errorResponseDeserializer.getMessage());
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.NOT_UNIQUE_EXCEPTION);
+        assertEquals(response.get(DefaultExceptionAttributes.MESSAGE).getAsString(), messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
     }
     
     @Test
@@ -211,24 +198,27 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco bancoComCnpjInvalido = BancoTestUtil.bancoComCnpjInvalido();
         
-        String inputJson = super.mapToJson(bancoComCnpjInvalido);
+        String inputJson = objectToString(bancoComCnpjInvalido);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.VALIDATION_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoCnpjInvalido", null, null), errorResponseDeserializer.getMessages().get(0));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.VALIDATION_EXCEPTION);
+        
+        JsonArray errors = response.get(DefaultExceptionAttributes.MESSAGES).getAsJsonArray();
+        
+        assertEquals(errors.size(), 1);
+        
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+        
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoCnpjInvalido", null, null)));
     }
     
     @Test
@@ -241,24 +231,27 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco bancoComNomeComMenosDeDoisCaracteres = BancoTestUtil.bancoComNomeComMenosDeDoisCaracteres();
         
-        String inputJson = super.mapToJson(bancoComNomeComMenosDeDoisCaracteres);
+        String inputJson = objectToString(bancoComNomeComMenosDeDoisCaracteres);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.VALIDATION_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres", null, null), errorResponseDeserializer.getMessages().get(0));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.VALIDATION_EXCEPTION);
+        
+        JsonArray errors = response.get(DefaultExceptionAttributes.MESSAGES).getAsJsonArray();
+        
+        assertEquals(errors.size(), 1);
+        
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+        
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres", null, null)));
     }
     
     @Test
@@ -271,24 +264,27 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres = BancoTestUtil.bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres();
         
-        String inputJson = super.mapToJson(bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres);
+        String inputJson = objectToString(bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY.value(), status);
-        Assert.assertEquals(TestUtil.VALIDATION_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres", null, null), errorResponseDeserializer.getMessages().get(0));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.VALIDATION_EXCEPTION);
+        
+        JsonArray errors = response.get(DefaultExceptionAttributes.MESSAGES).getAsJsonArray();
+        
+        assertEquals(errors.size(), 1);
+        
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+        
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres", null, null)));
     }
     
     @Test
@@ -297,24 +293,20 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         bancoRepository.save(bancoDoBrasil);
         
-        String inputJson = super.mapToJson(bancoDoBrasil);
+        String inputJson = objectToString(bancoDoBrasil);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, 0)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, 0)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isNotFound())
                 .andReturn();
-
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
-
-        ErrorResponseDeserializer errorResponseDeserializer = super.mapFromJsonObject(content, ErrorResponseDeserializer.class);
         
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), status);
-        Assert.assertEquals(TestUtil.NOT_FOUND_EXCEPTION, errorResponseDeserializer.getException());
-        Assert.assertEquals(messageSource.getMessage("bancoNaoEncontrado", null, null), errorResponseDeserializer.getMessage());
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        
+        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.NOT_FOUND_EXCEPTION);
+        assertEquals(response.get(DefaultExceptionAttributes.MESSAGE).getAsString(), messageSource.getMessage("bancoNaoEncontrado", null, null));
     }
     
     @Test
@@ -327,23 +319,21 @@ public class UpdateBancoIntegrationTest extends BaseIntegrationTest {
         
         Banco caixaEconomicaFederal = BancoTestUtil.caixaEconomicaFederal();
         
-        String inputJson = super.mapToJson(caixaEconomicaFederal);
+        String inputJson = objectToString(caixaEconomicaFederal);
 
-        MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.put(uri, id)
+        MvcResult mvcResult = mockMvc
+                .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
                         .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN))
                         .content(inputJson))                
+                .andExpect(status().isOk())
                 .andReturn();
 
-        int status = result.getResponse().getStatus();
-        String content = result.getResponse().getContentAsString();        
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
 
-        Banco updatedBanco = super.mapFromJsonObject(content, Banco.class);        
-        caixaEconomicaFederal.setId(updatedBanco.getId());
-        
-        Assert.assertEquals(HttpStatus.OK.value(), status);
-        Assert.assertEquals(caixaEconomicaFederal, updatedBanco);
+        assertNotNull(response.get(BancoTestUtil.BANCO_ID).getAsLong());
+        assertEquals(response.get(BancoTestUtil.BANCO_NUMERO).getAsInt(), caixaEconomicaFederal.getNumero());
+        assertEquals(response.get(BancoTestUtil.BANCO_CNPJ).getAsString(), caixaEconomicaFederal.getCnpj());
+        assertEquals(response.get(BancoTestUtil.BANCO_NOME).getAsString(), caixaEconomicaFederal.getNome());
     }
 }

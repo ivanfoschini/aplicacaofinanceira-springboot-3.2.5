@@ -10,13 +10,13 @@ import org.springframework.http.HttpStatus;
 
 public class DefaultExceptionAttributes implements ExceptionAttributes {
 
-    private static final String EXCEPTION = "exception";
-    private static final String MESSAGE = "message";
-    private static final String MESSAGES = "messages";
-    private static final String PATH = "path";
-    private static final String REASON = "reason";
-    private static final String STATUS = "status";
-    private static final String TIMESTAMP = "timestamp";
+    public static final String EXCEPTION = "exception";
+    public static final String MESSAGE = "message";
+    public static final String MESSAGES = "messages";
+    public static final String PATH = "path";
+    public static final String REASON = "reason";
+    public static final String STATUS = "status";
+    public static final String TIMESTAMP = "timestamp";
 
     @Override
     public Map<String, Object> getExceptionAttributes(String message, Exception exception, HttpServletRequest httpRequest, HttpStatus httpStatus) {
