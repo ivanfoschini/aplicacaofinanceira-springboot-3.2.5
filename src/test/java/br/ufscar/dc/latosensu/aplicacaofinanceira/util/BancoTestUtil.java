@@ -4,6 +4,11 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 
 public class BancoTestUtil {
 
+    public static final String BANCO_ID = "id";    
+    public static final String BANCO_CNPJ = "cnpj";
+    public static final String BANCO_NOME = "nome";
+    public static final String BANCO_NUMERO = "numero";    
+    
     public static final String BANCO_DELETE_URI = "/banco/delete";
     public static final String BANCO_LIST_URI = "/banco/list";    
     public static final String BANCO_SAVE_URI = "/banco/save";
