@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class AutorizacaoInterceptor extends HandlerInterceptorAdapter {
+public class AutorizacaoInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UsuarioService usuarioService;
