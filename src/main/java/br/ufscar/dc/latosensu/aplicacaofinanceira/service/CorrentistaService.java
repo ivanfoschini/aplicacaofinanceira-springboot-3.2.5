@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.CorrentistaDTO;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.BadRequestException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DifferentAccountsException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountClientException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountOwnershipException;
@@ -39,8 +40,8 @@ public class CorrentistaService {
     @Autowired
     private MessageSource messageSource;
 
-    public List<Correntista> associate(List<CorrentistaDTO> correntistasDTO) throws DifferentAccountsException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
-        if (correntistasDTO.isEmpty()) throw new HttpMessageNotReadableException(messageSource.getMessage("generalBadRequest", null, null));
+    public List<Correntista> associate(List<CorrentistaDTO> correntistasDTO) throws BadRequestException, DifferentAccountsException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
+        if (correntistasDTO.isEmpty()) throw new BadRequestException(messageSource.getMessage("generalBadRequest", null, null));
         
         List<Correntista> correntistas = new ArrayList<>();
         Conta conta = null;
