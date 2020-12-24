@@ -1,11 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.CorrentistaDTO;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DifferentAccountsException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountClientException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountOwnershipException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NoAccountOwnershipException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.*;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Correntista;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.service.CorrentistaService;
 import java.util.List;
@@ -26,7 +22,7 @@ public class CorrentistaController extends BaseController {
     private CorrentistaService correntistaService;
     
     @PostMapping("/associate")
-    public List<Correntista> associate(@RequestBody List<CorrentistaDTO> correntistasDTO) throws DifferentAccountsException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
+    public List<Correntista> associate(@RequestBody List<CorrentistaDTO> correntistasDTO) throws BadRequestException, DifferentAccountsException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
         return correntistaService.associate(correntistasDTO);
     }
     

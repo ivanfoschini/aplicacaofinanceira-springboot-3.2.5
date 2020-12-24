@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.BadRequestException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DifferentAccountsException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
@@ -24,6 +25,15 @@ public class BaseController {
     
     @Autowired
     private MessageSource messageSource;
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleBadRequestException(Exception exception, HttpServletRequest request) {
+        ExceptionAttributes exceptionAttributes = new DefaultExceptionAttributes();
+
+        Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(exception.getMessage(), exception, request, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+    }
     
     @ExceptionHandler(DifferentAccountsException.class)
     public ResponseEntity<Map<String, Object>> handleDifferentAccountsException(Exception exception, HttpServletRequest request) {
