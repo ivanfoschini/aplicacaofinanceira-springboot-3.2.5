@@ -21,7 +21,7 @@ public class AutorizacaoInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
 
         if (requestUri.length < 3 || requestUri[1] == null || requestUri[2] == null ||
-                token == null || token.trim() == "" ||
+                token == null || token.trim().equals("") ||
                 !usuarioService.autorizar("/" + requestUri[1] + "/" + requestUri[2], token)) {
             throw new ForbiddenException();
         } 

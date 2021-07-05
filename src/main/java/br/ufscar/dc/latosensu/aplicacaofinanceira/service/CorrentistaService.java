@@ -46,20 +46,20 @@ public class CorrentistaService {
         List<Correntista> correntistas = new ArrayList<>();
         Conta conta = null;
 
-        for (CorrentistaDTO correntistaJson : correntistasDTO) {
-            Long contaId = correntistaJson.getContaId();
+        for (CorrentistaDTO correntistaDTO : correntistasDTO) {
+            Long contaId = correntistaDTO.getContaId();
 
             conta = contaRepository.findById(contaId.longValue());
 
             if (conta == null) throw new NotFoundException(messageSource.getMessage("contaNaoEncontrada", null, null));
             
-            Long clienteId = correntistaJson.getClienteId();
+            Long clienteId = correntistaDTO.getClienteId();
 
             Cliente cliente = clienteRepository.findById(clienteId.longValue());
 
             if (cliente == null) throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));            
 
-            Correntista correntista = new Correntista(new CorrentistaPK(contaId, clienteId), correntistaJson.isTitularidade(), conta, cliente);
+            Correntista correntista = new Correntista(new CorrentistaPK(contaId, clienteId), correntistaDTO.isTitularidade(), conta, cliente);
             
             correntistas.add(correntista);
         }
