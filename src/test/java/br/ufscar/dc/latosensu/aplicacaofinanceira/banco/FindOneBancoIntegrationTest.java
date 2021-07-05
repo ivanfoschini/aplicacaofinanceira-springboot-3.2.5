@@ -46,7 +46,7 @@ public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
         mockMvc
             .perform(get(uri, id)
                      .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO)))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
@@ -59,7 +59,7 @@ public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
         
         mockMvc
             .perform(get(uri, id))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
