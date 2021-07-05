@@ -1,7 +1,11 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.security;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ForbiddenException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,14 +14,18 @@ import java.util.Date;
 public class SecurityUtil {
 
     private static final String JWT_TOKEN_KEY = "LATOSENSU";
-    private static final Long JWT_TOKEN_EXPIRATION_TIME = 86400000L; //Um dia em milisegundos  
+    private static final Long JWT_TOKEN_EXPIRATION_TIME = 86400000L; //Um dia em milisegundos
     
-    public String getNomeDeUsuario(String token) {
-        return Jwts.parser()
-                .setSigningKey(JWT_TOKEN_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();   
+    public String getNomeDeUsuario(String token) throws ForbiddenException {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(JWT_TOKEN_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            throw new ForbiddenException();
+        }
     }
     
     public String getToken(String nomeDeUsuario) {

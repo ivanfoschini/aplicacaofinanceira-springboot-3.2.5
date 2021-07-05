@@ -1,6 +1,8 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ForbiddenException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.UnauthorizedException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Papel;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Servico;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Usuario;
@@ -24,7 +26,7 @@ public class UsuarioService {
     @Autowired
     private MessageSource messageSource;
     
-    public boolean autorizar(String requestUri, String token) {
+    public boolean autorizar(String requestUri, String token) throws ForbiddenException {
         String nomeDeUsuario = new SecurityUtil().getNomeDeUsuario(token);
         Usuario usuario = usuarioRepository.findByNomeDeUsuario(nomeDeUsuario);
         Servico servico = servicoRepository.findByUri(requestUri);
@@ -42,17 +44,17 @@ public class UsuarioService {
         return false;
     }
     
-    public String login(String nomeDeUsuario, String senha) throws NotFoundException, NoSuchAlgorithmException {
+    public String login(String nomeDeUsuario, String senha) throws UnauthorizedException, NoSuchAlgorithmException {
         SecurityUtil securityUtil = new SecurityUtil();
         
         if (nomeDeUsuario == null || senha == null) {
-            throw new NotFoundException(messageSource.getMessage("usuarioNaoEncontrado", null, null));
+            throw new UnauthorizedException();
         }
         
         Usuario usuario = usuarioRepository.findByNomeDeUsuarioAndSenha(nomeDeUsuario, securityUtil.generateMD5(senha));
 
         if (usuario == null) {
-            throw new NotFoundException(messageSource.getMessage("usuarioNaoEncontrado", null, null));
+            throw new UnauthorizedException();
         }        
         
         return securityUtil.getToken(usuario.getNomeDeUsuario());

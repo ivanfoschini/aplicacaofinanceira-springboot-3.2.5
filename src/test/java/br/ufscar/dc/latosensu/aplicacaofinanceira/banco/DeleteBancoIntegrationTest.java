@@ -47,7 +47,7 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         mockMvc
             .perform(delete(uri, id)
                     .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO)))                 
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
@@ -60,7 +60,7 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         
         mockMvc
             .perform(delete(uri, id))                 
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
@@ -74,7 +74,7 @@ public class DeleteBancoIntegrationTest extends BaseIntegrationTest {
         mockMvc
             .perform(delete(uri, id)
                     .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO)))                 
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test

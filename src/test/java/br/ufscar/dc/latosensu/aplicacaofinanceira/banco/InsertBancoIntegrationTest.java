@@ -51,7 +51,7 @@ public class InsertBancoIntegrationTest extends BaseIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON)                 
                     .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO))
                     .content(inputJson))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
@@ -64,7 +64,7 @@ public class InsertBancoIntegrationTest extends BaseIntegrationTest {
             .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)                                           
                     .content(inputJson))                
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
     
     @Test
@@ -78,7 +78,7 @@ public class InsertBancoIntegrationTest extends BaseIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON)                   
                     .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO))
                     .content(inputJson))                
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
 
     @Test
