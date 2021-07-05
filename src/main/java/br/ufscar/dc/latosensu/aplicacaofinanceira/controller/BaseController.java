@@ -5,12 +5,14 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttr
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DifferentAccountsException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ExceptionAttributes;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ForbiddenException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountClientException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountOwnershipException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NoAccountOwnershipException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.UnauthorizedException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +53,11 @@ public class BaseController {
         Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(exception.getMessage(), exception, request, HttpStatus.UNPROCESSABLE_ENTITY);
 
         return new ResponseEntity<>(responseBody, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> handleForbiddenException(Exception exception, HttpServletRequest request) {
+        return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -114,6 +121,11 @@ public class BaseController {
         Map<String, Object> responseBody = exceptionAttributes.getExceptionAttributes(exception.getMessage(), exception, request, HttpStatus.UNPROCESSABLE_ENTITY);
 
         return new ResponseEntity<>(responseBody, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedException(Exception exception, HttpServletRequest request) {
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
     
     @ExceptionHandler(ValidationException.class)
