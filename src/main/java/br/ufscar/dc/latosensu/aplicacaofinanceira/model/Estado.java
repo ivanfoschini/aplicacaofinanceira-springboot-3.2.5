@@ -1,6 +1,5 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,9 +12,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "estado")
-public class Estado implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Estado {
     
     @Id
     @SequenceGenerator(name = "Estado_Generator", sequenceName = "estado_sequence", allocationSize = 1)
@@ -44,27 +41,5 @@ public class Estado implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Estado)) {
-            return false;
-        }
-        
-        Estado other = (Estado) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
     }
 }

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EstadoRepository extends JpaRepository<Estado, Long> {
  
-    Estado findById(long id);
-    
     @Query("select estado from Estado estado where estado.nome = :nome")
     Estado findByNome(@Param("nome") String nome);
     
