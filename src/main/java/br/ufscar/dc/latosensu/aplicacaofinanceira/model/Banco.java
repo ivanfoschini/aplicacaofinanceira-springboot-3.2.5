@@ -1,7 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.Cnpj;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,9 +14,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "banco")
-public class Banco implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Banco {
 
     @Id
     @SequenceGenerator(name = "Banco_Generator", sequenceName = "banco_sequence", allocationSize = 1)
@@ -72,27 +69,5 @@ public class Banco implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Banco)) {
-            return false;
-        }
-        
-        Banco other = (Banco) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
     }
 }
