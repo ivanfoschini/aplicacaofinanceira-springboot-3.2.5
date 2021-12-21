@@ -2,7 +2,6 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.Cep;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +20,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "endereco")
-public class Endereco implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class Endereco {
     
     @Id
     @SequenceGenerator(name="Endereco_Generator", sequenceName="endereco_sequence", allocationSize=1)
@@ -58,7 +55,7 @@ public class Endereco implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "endereco", fetch = FetchType.LAZY)
     private Agencia agencia;
     
-    @JsonIgnoreProperties({"nome", "estado", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"nome", "estado", "hibernateLazyInitializer"})
     @JoinColumn(name = "cidade_id", referencedColumnName = "cidade_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Cidade cidade;
@@ -128,24 +125,4 @@ public class Endereco implements Serializable {
     public void setCidade(Cidade cidade) {
         this.cidade = cidade;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Endereco)) {
-            return false;
-        }
-        Endereco other = (Endereco) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }    
 }

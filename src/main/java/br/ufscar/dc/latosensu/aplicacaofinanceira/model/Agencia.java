@@ -1,7 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,15 +13,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "agencia")
-public class Agencia implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class Agencia {
     
     @Id
     @SequenceGenerator(name="Agencia_Generator", sequenceName="agencia_sequence", allocationSize=1)
@@ -39,13 +37,14 @@ public class Agencia implements Serializable {
     @Size(min = 2, max = 255, message = "{agenciaNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
     @Column(name = "nome", nullable = false, length = 255)
     private String nome;
-    
-    @JsonIgnoreProperties({"agencia", "hibernateLazyInitializer", "handler"})
+
+    @Valid
+    @JsonIgnoreProperties({"agencia", "hibernateLazyInitializer"})
     @JoinColumn(name = "endereco_id", referencedColumnName = "endereco_id", nullable = false)
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     private Endereco endereco;
     
-    @JsonIgnoreProperties({"numero", "cnpj", "nome", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"numero", "cnpj", "nome", "hibernateLazyInitializer"})
     @JoinColumn(name = "banco_id", referencedColumnName = "banco_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Banco banco;
@@ -90,27 +89,5 @@ public class Agencia implements Serializable {
 
     public void setBanco(Banco banco) {
         this.banco = banco;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Agencia)) {
-            return false;
-        }
-        
-        Agencia other = (Agencia) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
     }
 }
