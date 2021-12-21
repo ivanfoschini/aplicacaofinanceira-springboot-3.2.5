@@ -3,6 +3,8 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.AgenciaRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +45,8 @@ public class AgenciaService {
     }
 
     public Agencia save(Agencia agencia) throws NotFoundException, NotUniqueException {
-        validateBanco(agencia);
-        validateCidade(agencia);
+        validateBanco(agencia.getBanco());
+        validateCidade(agencia.getEndereco().getCidade());
         
         if (!isNumberUnique(agencia.getNumero())) {
             throw new NotUniqueException(messageSource.getMessage("agenciaNumeroDeveSerUnico", null, null));
@@ -54,8 +56,8 @@ public class AgenciaService {
     }
 
     public Agencia update(long id, Agencia agencia) throws NotFoundException, NotUniqueException {
-        validateBanco(agencia);
-        validateCidade(agencia);
+        validateBanco(agencia.getBanco());
+        validateCidade(agencia.getEndereco().getCidade());
         
         Agencia agenciaToUpdate = findById(id);
 
@@ -92,11 +94,11 @@ public class AgenciaService {
         return agencia == null;
     }
 
-    private void validateBanco(Agencia agencia) throws NotFoundException {
-        bancoService.findById(agencia.getBanco().getId());
+    private void validateBanco(Banco banco) throws NotFoundException {
+        bancoService.findById(banco.getId());
     }
 
-    private void validateCidade(Agencia agencia) throws NotFoundException {
-        cidadeService.findById(agencia.getEndereco().getCidade().getId());
+    private void validateCidade(Cidade cidade) throws NotFoundException {
+        cidadeService.findById(cidade.getId());
     }
 }
