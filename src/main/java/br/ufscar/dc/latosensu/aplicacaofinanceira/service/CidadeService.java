@@ -3,6 +3,7 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class CidadeService {
     }
 
     public Cidade save(Cidade cidade) throws NotFoundException, NotUniqueException {
-        estadoService.findById(cidade.getEstado().getId());
+        validateEstado(cidade.getEstado());
         
         if (!isNomeUniqueForEstado(cidade.getNome(), cidade.getEstado().getId())) {
             throw new NotUniqueException(messageSource.getMessage("cidadeNomeDeveSerUnicoParaEstado", null, null));
@@ -50,7 +51,7 @@ public class CidadeService {
     }
 
     public Cidade update(long id, Cidade cidade) throws NotFoundException, NotUniqueException {
-        estadoService.findById(cidade.getEstado().getId());
+        validateEstado(cidade.getEstado());
         
         Cidade cidadeToUpdate = findById(id);
 
@@ -74,5 +75,9 @@ public class CidadeService {
         Cidade cidade = cidadeRepository.findByNomeAndEstadoAndDifferentId(nomeDaCidade, idDoEstadoToUpdate, idDaCidadeCurrent);
 
         return cidade == null;
+    }
+
+    private void validateEstado(Estado estado) throws NotFoundException {
+        estadoService.findById(estado.getId());
     }
 }
