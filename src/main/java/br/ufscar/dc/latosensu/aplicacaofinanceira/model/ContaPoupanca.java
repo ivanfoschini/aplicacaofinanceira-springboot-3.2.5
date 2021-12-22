@@ -1,6 +1,5 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -12,9 +11,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "conta_poupanca")
 @DiscriminatorValue(value = "P")
-public class ContaPoupanca extends Conta implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public class ContaPoupanca extends Conta {
     
     @NotNull(message = "{contaPoupancaDataDeAniversarioNaoPodeSerNula}")
     @Column(name = "data_de_aniversario", nullable = false)
