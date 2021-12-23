@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BancoRepository extends JpaRepository<Banco, Long> {
     
-    Banco findById(long id);
-    
     @Query("select banco from Banco banco where banco.numero = :numero")
     Banco findByNumero(@Param("numero") Integer numero);
     
