@@ -3,15 +3,10 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.EmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cliente;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.ClientePessoaFisica;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Endereco;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ClientePessoaFisicaRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.EnderecoRepository;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.ValidationUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +14,13 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional
 public class ClientePessoaFisicaService {
 
     @Autowired
-    private CidadeRepository cidadeRepository;
+    private CidadeService cidadeService;
     
     @Autowired
     private ClientePessoaFisicaRepository clientePessoaFisicaRepository;
@@ -38,21 +32,17 @@ public class ClientePessoaFisicaService {
     private MessageSource messageSource;
 
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
-        Cliente cliente = clientePessoaFisicaRepository.findById(id);
+        ClientePessoaFisica clientePessoaFisica = findById(id);
 
-        if (cliente == null || !(cliente instanceof ClientePessoaFisica)) {
-            throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));
-        }
-        
-        if (!cliente.getCorrentistas().isEmpty()) {
+        if (!clientePessoaFisica.getCorrentistas().isEmpty()) {
             throw new NotEmptyCollectionException(messageSource.getMessage("clienteEhCorrentista", null, null));
-        } 
-        
-        for (Endereco endereco: cliente.getEnderecos()) {
+        }
+
+        for (Endereco endereco: clientePessoaFisica.getEnderecos()) {
             enderecoRepository.delete(endereco);
         }
         
-        clientePessoaFisicaRepository.delete((ClientePessoaFisica) cliente);
+        clientePessoaFisicaRepository.delete(clientePessoaFisica);
     }
 
     public List<ClientePessoaFisica> findAll() {
@@ -60,23 +50,17 @@ public class ClientePessoaFisicaService {
     }    
 
     public ClientePessoaFisica findById(long id) throws NotFoundException {
-        Cliente cliente = clientePessoaFisicaRepository.findById(id);
-
-        if (cliente == null || !(cliente instanceof ClientePessoaFisica)) {
-            throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));
-        }        
-        
-        return (ClientePessoaFisica) cliente;
+        return clientePessoaFisicaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null)));
     }
 
-    public ClientePessoaFisica save(ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
-        new ValidationUtil().validate(bindingResult);
-        new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);
-        
+    public ClientePessoaFisica save(ClientePessoaFisica clientePessoaFisica) throws EmptyCollectionException, NotFoundException {
         if (clientePessoaFisica.getEnderecos().isEmpty()) {
             throw new EmptyCollectionException(messageSource.getMessage("clienteSemEnderecos", null, null));
         }
-        
+
+        cidadeService.validateCidades(clientePessoaFisica.getEnderecos());
+
         ClientePessoaFisica savedClientePessoaFisica = clientePessoaFisicaRepository.save(clientePessoaFisica);
         
         for (Endereco endereco: clientePessoaFisica.getEnderecos()) {
@@ -87,20 +71,15 @@ public class ClientePessoaFisicaService {
         return savedClientePessoaFisica;
     }
 
-    public ClientePessoaFisica update(long id, ClientePessoaFisica clientePessoaFisica, BindingResult bindingResult) throws EmptyCollectionException, NotFoundException, NotUniqueException, ValidationException {
-        new ValidationUtil().validate(bindingResult);   
-        new ValidationUtil().validateCidades(clientePessoaFisica, cidadeRepository, messageSource);
-        
+    public ClientePessoaFisica update(long id, ClientePessoaFisica clientePessoaFisica) throws EmptyCollectionException, NotFoundException {
         if (clientePessoaFisica.getEnderecos().isEmpty()) {
             throw new EmptyCollectionException(messageSource.getMessage("clienteSemEnderecos", null, null));
         }
+
+        cidadeService.validateCidades(clientePessoaFisica.getEnderecos());
         
         ClientePessoaFisica clientePessoaFisicaToUpdate = findById(id);
 
-        if (clientePessoaFisicaToUpdate == null) {
-            throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));
-        }
-        
         clientePessoaFisicaToUpdate.setNome(clientePessoaFisica.getNome());
         clientePessoaFisicaToUpdate.setStatus(clientePessoaFisica.getStatus());
         clientePessoaFisicaToUpdate.setRg(clientePessoaFisica.getRg());

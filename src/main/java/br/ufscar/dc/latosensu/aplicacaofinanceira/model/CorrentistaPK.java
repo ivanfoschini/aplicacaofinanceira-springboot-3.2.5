@@ -38,31 +38,4 @@ public class CorrentistaPK implements Serializable {
     public void setClienteId(long clienteId) {
         this.clienteId = clienteId;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (int) contaId;
-        hash += (int) clienteId;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof CorrentistaPK)) {
-            return false;
-        }
-        
-        CorrentistaPK other = (CorrentistaPK) object;
-        
-        if (this.contaId != other.contaId) {
-            return false;
-        }
-        
-        if (this.clienteId != other.clienteId) {
-            return false;
-        }
-        
-        return true;
-    }
 }

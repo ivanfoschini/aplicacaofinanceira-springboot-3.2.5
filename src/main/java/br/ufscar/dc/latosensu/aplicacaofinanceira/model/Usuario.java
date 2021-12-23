@@ -1,6 +1,5 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,9 +14,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Usuario {
     
     @Id
     @SequenceGenerator(name = "Usuario_Generator", sequenceName = "usuario_sequence", allocationSize = 1)
@@ -66,27 +63,5 @@ public class Usuario implements Serializable {
 
     public void setPapeis(List<Papel> papeis) {
         this.papeis = papeis;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Usuario)) {
-            return false;
-        }
-        
-        Usuario other = (Usuario) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
     }
 }
