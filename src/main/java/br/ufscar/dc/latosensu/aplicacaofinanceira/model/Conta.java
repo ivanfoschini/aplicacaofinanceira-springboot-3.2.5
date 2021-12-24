@@ -2,8 +2,7 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,9 +26,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "conta")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "tipo", length = 1)
-public abstract class Conta implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
+public abstract class Conta {
     
     @Id
     @SequenceGenerator(name="Conta_Generator", sequenceName="conta_sequence", allocationSize=1)
@@ -50,16 +47,16 @@ public abstract class Conta implements Serializable {
     @Column(name = "data_de_abertura", nullable = false)
     private Date dataDeAbertura;
         
-    @JsonIgnoreProperties({"numero", "nome", "endereco", "banco", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"numero", "nome", "endereco", "banco", "hibernateLazyInitializer"})
     @JoinColumn(name = "agencia_id", referencedColumnName = "agencia_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Agencia agencia;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "conta", fetch = FetchType.LAZY)
-    private Collection<Correntista> correntistas;
+    private List<Correntista> correntistas;
         
-    public Conta() {}
+    protected Conta() {}
 
     public Long getId() {
         return id;
@@ -100,34 +97,12 @@ public abstract class Conta implements Serializable {
     public void setAgencia(Agencia agencia) {
         this.agencia = agencia;
     }
-    
-    public Collection<Correntista> getCorrentistas() {
+
+    public List<Correntista> getCorrentistas() {
         return correntistas;
     }
 
-    public void setCorrentistas(Collection<Correntista> correntistas) {
+    public void setCorrentistas(List<Correntista> correntistas) {
         this.correntistas = correntistas;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Conta)) {
-            return false;
-        }
-        
-        Conta other = (Conta) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
-    }    
 }

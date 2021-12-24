@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CidadeRepository extends JpaRepository<Cidade, Long> {
     
-    Cidade findById(long id);
-    
     @Query("select cidade from Cidade cidade left join fetch cidade.estado estado where cidade.nome = :nomeDaCidade and estado.id = :idDoEstado")
     Cidade findByNomeAndEstado(@Param("nomeDaCidade") String nomeDaCidade, @Param("idDoEstado") Long idDoEstado);
 

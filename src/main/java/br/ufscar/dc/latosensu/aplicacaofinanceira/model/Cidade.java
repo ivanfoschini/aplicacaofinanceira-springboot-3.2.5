@@ -2,8 +2,7 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,9 +20,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "cidade")
-public class Cidade implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Cidade {
     
     @Id
     @SequenceGenerator(name = "Cidade_Generator", sequenceName = "cidade_sequence", allocationSize = 1)
@@ -36,14 +33,14 @@ public class Cidade implements Serializable {
     @Column(name = "nome", nullable = false, length = 255)
     private String nome;
     
-    @JsonIgnoreProperties({"nome", "cidades", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"nome", "cidades", "hibernateLazyInitializer"})
     @JoinColumn(name = "estado_id", referencedColumnName = "estado_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Estado estado;
     
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cidade", fetch = FetchType.LAZY)
-    private Collection<Endereco> enderecos;
+    private List<Endereco> enderecos;
 
     public Cidade() {}
 
@@ -71,33 +68,11 @@ public class Cidade implements Serializable {
         this.estado = estado;
     }
     
-    public Collection<Endereco> getEnderecos() {
+    public List<Endereco> getEnderecos() {
         return enderecos;
     }
 
-    public void setEnderecos(Collection<Endereco> enderecos) {
+    public void setEnderecos(List<Endereco> enderecos) {
         this.enderecos = enderecos;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Cidade)) {
-            return false;
-        }
-        
-        Cidade other = (Cidade) object;
-        
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        
-        return true;
     }
 }

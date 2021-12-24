@@ -1,8 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.ClienteTitularidadeDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.CorrentistaDTO;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.BadRequestException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DifferentAccountsException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountClientException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.MoreThanOneAccountOwnershipException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NoAccountOwnershipException;
@@ -11,13 +10,9 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cliente;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Conta;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Correntista;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.CorrentistaPK;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ClienteRepository;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ContaRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CorrentistaRepository;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -32,43 +27,30 @@ public class CorrentistaService {
     private CorrentistaRepository correntistaRepository;
 
     @Autowired
-    private ContaRepository contaRepository;
+    private ContaService contaService;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ClienteService clienteService;
 
     @Autowired
     private MessageSource messageSource;
 
-    public List<Correntista> associate(List<CorrentistaDTO> correntistasDTO) throws BadRequestException, DifferentAccountsException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
-        if (correntistasDTO.isEmpty()) throw new BadRequestException(messageSource.getMessage("generalBadRequest", null, null));
-        
+    public List<Correntista> associate(CorrentistaDTO correntistaDTO) throws HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
         List<Correntista> correntistas = new ArrayList<>();
-        Conta conta = null;
+        Conta conta = contaService.findById(correntistaDTO.getContaId());
 
-        for (CorrentistaDTO correntistaDTO : correntistasDTO) {
-            Long contaId = correntistaDTO.getContaId();
+        for (ClienteTitularidadeDTO clienteTitularidadeDTO: correntistaDTO.getClientes()) {
+            Cliente cliente = clienteService.findById(clienteTitularidadeDTO.getClienteId());
 
-            conta = contaRepository.findById(contaId.longValue());
+            Correntista correntista = new Correntista(new CorrentistaPK(conta.getId(), cliente.getId()), clienteTitularidadeDTO.isTitularidade(), conta, cliente);
 
-            if (conta == null) throw new NotFoundException(messageSource.getMessage("contaNaoEncontrada", null, null));
-            
-            Long clienteId = correntistaDTO.getClienteId();
-
-            Cliente cliente = clienteRepository.findById(clienteId.longValue());
-
-            if (cliente == null) throw new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null));            
-
-            Correntista correntista = new Correntista(new CorrentistaPK(contaId, clienteId), correntistaDTO.isTitularidade(), conta, cliente);
-            
             correntistas.add(correntista);
         }
 
         if (hasMoreThanOneAccountOwnership(correntistas)) throw new MoreThanOneAccountOwnershipException(messageSource.getMessage("correntistaTitularidadeDuplicada", null, null));
         if (hasNoAccountOwnership(correntistas)) throw new NoAccountOwnershipException(messageSource.getMessage("correntistaSemTitularidade", null, null));
-        if (hasDifferentAccounts(correntistas)) throw new DifferentAccountsException(messageSource.getMessage("correntistaContasDiferentes", null, null));
         if (hasDuplicatedAccountClient(correntistas)) throw new MoreThanOneAccountClientException(messageSource.getMessage("correntistaClienteDuplicado", null, null));
-                
+
         correntistaRepository.deleteByConta(conta);
 
         for (Correntista correntista : correntistas) {
@@ -86,16 +68,6 @@ public class CorrentistaService {
         return correntistaRepository.findByConta(contaId);
     }
 
-    private boolean hasDifferentAccounts(List<Correntista> correntistas) {
-        Set<Long> contasIds = new HashSet<>();
-
-        for (Correntista correntista : correntistas) {
-            contasIds.add(correntista.getConta().getId());            
-        }
-        
-        return contasIds.size() > 1 ? true : false;
-    }
-    
     private boolean hasDuplicatedAccountClient(List<Correntista> correntistas) {
         List<Cliente> clientes = new ArrayList<>();
 
@@ -121,7 +93,7 @@ public class CorrentistaService {
             }
         }
 
-        return titulares.size() > 1 ? true : false;
+        return titulares.size() > 1;
     }
 
     private boolean hasNoAccountOwnership(List<Correntista> correntistas) {
@@ -133,6 +105,6 @@ public class CorrentistaService {
             }
         }
 
-        return titulares.isEmpty() ? true : false;
+        return titulares.isEmpty();
     }
 }

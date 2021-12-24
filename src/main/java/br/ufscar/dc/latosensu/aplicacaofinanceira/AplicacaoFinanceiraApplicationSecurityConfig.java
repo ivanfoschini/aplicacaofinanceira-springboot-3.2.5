@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class AplicacaoFinanceiraApplicationConfig implements WebMvcConfigurer {
+public class AplicacaoFinanceiraApplicationSecurityConfig implements WebMvcConfigurer {
 
     @Autowired
     AutorizacaoInterceptor autorizacaoInterceptor;

@@ -1,10 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cliente;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Conta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -16,9 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "correntista")
-public class Correntista implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Correntista {
     
     @JsonIgnore
     @EmbeddedId
@@ -28,12 +23,12 @@ public class Correntista implements Serializable {
     @Column(name = "titularidade")
     private boolean titularidade;
     
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @JoinColumn(name = "conta_id", referencedColumnName = "conta_id", nullable = false, insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Conta conta;
     
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer"})
     @JoinColumn(name = "cliente_id", referencedColumnName = "cliente_id", nullable = false, insertable = false, updatable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Cliente cliente;
@@ -77,27 +72,5 @@ public class Correntista implements Serializable {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (correntistaPK != null ? correntistaPK.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Correntista)) {
-            return false;
-        }
-        
-        Correntista other = (Correntista) object;
-        
-        if ((this.correntistaPK == null && other.correntistaPK != null) || (this.correntistaPK != null && !this.correntistaPK.equals(other.correntistaPK))) {
-            return false;
-        }
-        
-        return true;
     }
 }

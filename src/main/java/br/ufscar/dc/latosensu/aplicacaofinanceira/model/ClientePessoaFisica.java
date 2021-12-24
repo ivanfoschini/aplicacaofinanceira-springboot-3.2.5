@@ -1,7 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.model;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.Cpf;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -9,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue(value = "F")
-public class ClientePessoaFisica extends Cliente implements Serializable {
+public class ClientePessoaFisica extends Cliente {
     
     @NotNull(message = "{clientePessoaFisicaRgNaoPodeSerNulo}")
     @Column(name = "rg")
