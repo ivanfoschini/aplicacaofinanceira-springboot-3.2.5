@@ -35,6 +35,23 @@ import org.springframework.web.bind.annotation.RestController;
         content = @Content(mediaType = "application/json"))
 public class BancoController {
 
+    public static final String REQUEST_EXAMPLE = """
+                                                {
+                                                  "numero": 10,
+                                                  "cnpj": "00000000000191",
+                                                  "nome": "Banco do Brasil"
+                                                }
+                                                """;
+
+    public static final String RESPONSE_EXAMPLE = """
+                                                  {
+                                                    "id": 1,
+                                                    "numero": 10,
+                                                    "cnpj": "00000000000191",
+                                                    "nome": "Banco do Brasil"
+                                                   }
+                                                   """;
+
     @Autowired
     private BancoService bancoService;
 
@@ -58,15 +75,7 @@ public class BancoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Informações do banco encontrado",
                     content = { @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "id": 1,
-                                      "numero": 10,
-                                      "cnpj": "00000000000191",
-                                      "nome": "Banco do Brasil"
-                                    }
-                                    """
-                            ),
+                            examples = @ExampleObject(value = RESPONSE_EXAMPLE),
                             schema = @Schema(implementation = Banco.class)) }),
             @ApiResponse(responseCode = "404", description = "Banco não encontrado",
                     content = @Content(mediaType = "application/json"))
@@ -79,26 +88,12 @@ public class BancoController {
             parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
                     in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = { @Content(mediaType = "application/json",
-                                                        examples = @ExampleObject(value = """
-                                                            {
-                                                              "numero": 10,
-                                                              "cnpj": "00000000000191",
-                                                              "nome": "Banco do Brasil"
-                                                            }
-                                                            """),
+                                                        examples = @ExampleObject(value = REQUEST_EXAMPLE),
                                                         schema = @Schema(implementation = Banco.class)) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Banco inserido com sucesso",
                     content = { @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = """
-                                    {
-                                      "id": 1,
-                                      "numero": 10,
-                                      "cnpj": "00000000000191",
-                                      "nome": "Banco do Brasil"
-                                    }
-                                    """
-                            ),
+                            examples = @ExampleObject(value = RESPONSE_EXAMPLE),
                             schema = @Schema(implementation = Banco.class)) }),
             @ApiResponse(responseCode = "400", description = "Requisição mal formada",
                     content = @Content(mediaType = "application/json")),
