@@ -24,7 +24,7 @@ public class CorrentistaController {
     private CorrentistaService correntistaService;
     
     @PostMapping("/associate")
-    public List<Correntista> associate(@RequestBody @Valid CorrentistaDTO correntistaDTO) throws BadRequestException, HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
+    public List<Correntista> associate(@RequestBody @Valid CorrentistaDTO correntistaDTO) throws HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
         return correntistaService.associate(correntistaDTO);
     }
     
