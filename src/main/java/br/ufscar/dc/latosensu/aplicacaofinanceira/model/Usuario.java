@@ -25,7 +25,7 @@ public class Usuario {
     @Column(name = "nomeDeUsuario", nullable = false, unique = true, length = 255)
     private String nomeDeUsuario;
             
-    @Column(name = "senha", nullable = false, length = 32)        
+    @Column(name = "senha", nullable = false, length = 60)
     private String senha;
             
     @ManyToMany(mappedBy="usuarios", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

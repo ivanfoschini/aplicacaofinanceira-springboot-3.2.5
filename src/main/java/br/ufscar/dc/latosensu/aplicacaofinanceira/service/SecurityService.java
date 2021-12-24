@@ -1,5 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ForbiddenException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.UnauthorizedException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Papel;
@@ -7,9 +8,6 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Servico;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Usuario;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ServicoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.UsuarioRepository;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,16 +48,22 @@ public class SecurityService {
         return false;
     }
 
-    public String login(String nomeDeUsuario, String senha) throws UnauthorizedException, NoSuchAlgorithmException {
+    public String login(String nomeDeUsuario, String senha) throws UnauthorizedException {
         if (nomeDeUsuario == null || senha == null) {
             throw new UnauthorizedException();
         }
-        
-        Usuario usuario = usuarioRepository.findByNomeDeUsuarioAndSenha(nomeDeUsuario, generateMD5(senha));
+
+        Usuario usuario = usuarioRepository.findByNomeDeUsuario(nomeDeUsuario);
 
         if (usuario == null) {
             throw new UnauthorizedException();
-        }        
+        }
+
+        BCrypt.Result result = BCrypt.verifyer().verify(senha.toCharArray(), usuario.getSenha());
+
+        if (!result.verified) {
+            throw new UnauthorizedException();
+        }
         
         return generateToken(usuario.getNomeDeUsuario());
     }
@@ -77,13 +81,6 @@ public class SecurityService {
                 .compact();
     }
 
-    private String generateMD5(String text) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        messageDigest.update(text.getBytes(), 0, text.length());
-
-        return new BigInteger(1, messageDigest.digest()).toString(16);
-    }
-
     private String getNomeDeUsuarioFromToken(String token) throws ForbiddenException {
         try {
             return Jwts.parser()
@@ -95,4 +92,11 @@ public class SecurityService {
             throw new ForbiddenException();
         }
     }
+
+    /**
+    // Este método não é utilizado mas foi mantido para mostrar como foram geradas as senhas para os usuários
+    private String generateBCrypt(String text) {
+        return BCrypt.withDefaults().hashToString(10, text.toCharArray());
+    }
+    */
 }
