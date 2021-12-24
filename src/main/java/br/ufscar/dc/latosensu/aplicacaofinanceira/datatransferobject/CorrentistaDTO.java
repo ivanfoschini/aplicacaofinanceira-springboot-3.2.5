@@ -1,20 +1,18 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 public class CorrentistaDTO {
-    
-    private boolean titularidade;
+
+    @NotNull(message = "{correntistaContaIdNaoPodeSerNulo}")
     private Long contaId;
-    private Long clienteId;
 
-    public CorrentistaDTO() {}
-
-    public boolean isTitularidade() {
-        return titularidade;
-    }
-
-    public void setTitularidade(boolean titularidade) {
-        this.titularidade = titularidade;
-    }
+    @Valid
+    @NotEmpty(message = "{correntistaClienteTitularidadeNaoPodeSerVazio}")
+    private List<ClienteTitularidadeDTO> clientes;
 
     public Long getContaId() {
         return contaId;
@@ -24,11 +22,11 @@ public class CorrentistaDTO {
         this.contaId = contaId;
     }
 
-    public Long getClienteId() {
-        return clienteId;
+    public List<ClienteTitularidadeDTO> getClientes() {
+        return clientes;
     }
 
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
-}
+    public void setClientes(List<ClienteTitularidadeDTO> clientes) {
+        this.clientes = clientes;
+    }
 }

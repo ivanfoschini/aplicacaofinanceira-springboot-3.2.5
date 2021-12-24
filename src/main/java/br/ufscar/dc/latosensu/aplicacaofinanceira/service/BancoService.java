@@ -3,20 +3,16 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ValidationException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.validation.ValidationUtil;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 @Service
-@Transactional
 public class BancoService {
 
     @Autowired
@@ -25,17 +21,14 @@ public class BancoService {
     @Autowired
     private MessageSource messageSource;
 
+    @Transactional
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
-        Banco banco = bancoRepository.findById(id);
+        Banco banco = findById(id);
 
-        if (banco == null) {
-            throw new NotFoundException(messageSource.getMessage("bancoNaoEncontrado", null, null));
-        }
-        
         if (!banco.getAgencias().isEmpty()) {
             throw new NotEmptyCollectionException(messageSource.getMessage("bancoPossuiAgencias", null, null));
         }
-        
+
         bancoRepository.delete(banco);
     }
 
@@ -44,18 +37,12 @@ public class BancoService {
     }    
 
     public Banco findById(long id) throws NotFoundException {
-        Banco banco = bancoRepository.findById(id);
-
-        if (banco == null) {
-            throw new NotFoundException(messageSource.getMessage("bancoNaoEncontrado", null, null));
-        }        
-        
-        return banco;
+        return bancoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(messageSource.getMessage("bancoNaoEncontrado", null, null)));
     }
 
-    public Banco save(Banco banco, BindingResult bindingResult) throws NotUniqueException, ValidationException {
-        new ValidationUtil().validate(bindingResult);               
-        
+    @Transactional
+    public Banco save(Banco banco) throws NotUniqueException {
         if (!isNumberUnique(banco.getNumero())) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
@@ -63,15 +50,10 @@ public class BancoService {
         return bancoRepository.save(banco);
     }
 
-    public Banco update(long id, Banco banco, BindingResult bindingResult) throws NotFoundException, NotUniqueException, ValidationException {
-        new ValidationUtil().validate(bindingResult);   
-        
+    @Transactional
+    public Banco update(long id, Banco banco) throws NotFoundException, NotUniqueException {
         Banco bancoToUpdate = findById(id);
 
-        if (bancoToUpdate == null) {
-            throw new NotFoundException(messageSource.getMessage("bancoNaoEncontrado", null, null));
-        }
-        
         if (!isNumberUnique(banco.getNumero(), bancoToUpdate.getId())) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
@@ -86,12 +68,12 @@ public class BancoService {
     private boolean isNumberUnique(Integer numero) {
         Banco banco = bancoRepository.findByNumero(numero);
         
-        return banco == null ? true : false;
+        return banco == null;
     }
     
     private boolean isNumberUnique(Integer numero, Long id) {
         Banco banco = bancoRepository.findByNumeroAndDifferentId(numero, id);
         
-        return banco == null ? true : false;
+        return banco == null;
     }
 }

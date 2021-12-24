@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContaCorrenteRepository extends JpaRepository<ContaCorrente, Long> {
     
-    Conta findById(long id);
-    
     @Query("select conta from Conta conta where conta.numero = :numero")
     Conta findByNumero(@Param("numero") Integer numero);
     

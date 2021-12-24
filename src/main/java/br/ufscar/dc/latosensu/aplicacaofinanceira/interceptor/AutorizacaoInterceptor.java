@@ -1,7 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.interceptor;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.ForbiddenException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.service.UsuarioService;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.service.SecurityService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AutorizacaoInterceptor implements HandlerInterceptor {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private SecurityService securityService;
     
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
@@ -22,7 +22,7 @@ public class AutorizacaoInterceptor implements HandlerInterceptor {
 
         if (requestUri.length < 3 || requestUri[1] == null || requestUri[2] == null ||
                 token == null || token.trim().equals("") ||
-                !usuarioService.autorizar("/" + requestUri[1] + "/" + requestUri[2], token)) {
+                !securityService.authorize("/" + requestUri[1] + "/" + requestUri[2], token)) {
             throw new ForbiddenException();
         } 
           

@@ -1,9 +1,9 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.banco;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.service.SecurityService;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.IntegrationTestUtil;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.service.SecurityService;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.BancoTestUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class UpdateBancoIntegrationTest extends IntegrationTestUtil {
+class SaveBancoIntegrationTest extends IntegrationTestUtil {
 
-    private final String uri = BancoTestUtil.BANCO_UPDATE_URI + IntegrationTestUtil.ID_COMPLEMENT_URI;
+    private final String uri = BancoTestUtil.BANCO_SAVE_URI;
 
     @Autowired
     private SecurityService securityService;
-
+    
     @Autowired
     private BancoRepository bancoRepository;
     
@@ -42,52 +42,40 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     private MessageSource messageSource;
     
     @Test
-    void failsUpdateComUsuarioNaoAutorizado() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
-
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        String inputJson = objectToString(bancoDoBrasil);
+    void failsSaveComUsuarioNaoAutorizado() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
+        
+        String inputJson = objectToString(banco);
 
         mockMvc
-            .perform(put(uri, id)
-                    .contentType(MediaType.APPLICATION_JSON)
+            .perform(post(uri)
+                    .contentType(MediaType.APPLICATION_JSON)                 
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO))
                     .content(inputJson))
             .andExpect(status().isForbidden());
     }
-
+    
     @Test
-    void failsUpdateSemToken() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveSemToken() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        String inputJson = objectToString(bancoDoBrasil);
+        String inputJson = objectToString(banco);
 
         mockMvc
-            .perform(put(uri, id)
+            .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(inputJson))
             .andExpect(status().isForbidden());
     }
 
     @Test
-    void failsUpdateComUsuarioFuncionario() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveComUsuarioFuncionario() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        String inputJson = objectToString(bancoDoBrasil);
+        String inputJson = objectToString(banco);
 
         mockMvc
-            .perform(put(uri, id)
+            .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO))
                     .content(inputJson))
@@ -95,19 +83,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateSemCamposObrigatorios() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveSemCamposObrigatorios() throws Exception {
+        Banco banco = BancoTestUtil.bancoSemCamposObrigatorios();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco bancoSemCamposObrigatorios = BancoTestUtil.bancoSemCamposObrigatorios();
-
-        String inputJson = objectToString(bancoSemCamposObrigatorios);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -134,19 +116,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComNumeroMenorDoQueUm() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveComNumeroMenorDoQueUm() throws Exception {
+        Banco banco = BancoTestUtil.bancoComNumeroMenorDoQueUm();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco bancoComNumeroMenorDoQueUm = BancoTestUtil.bancoComNumeroMenorDoQueUm();
-
-        String inputJson = objectToString(bancoComNumeroMenorDoQueUm);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -170,19 +146,15 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComNumeroDuplicado() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
-        Banco caixaEconomicaFederal = BancoTestUtil.caixaEconomicaFederal();
+    void failsSaveComNumeroDuplicado() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        bancoRepository.save(bancoDoBrasil);
-        bancoRepository.save(caixaEconomicaFederal);
+        bancoRepository.save(banco);
 
-        Long id = caixaEconomicaFederal.getId();
-
-        String inputJson = objectToString(bancoDoBrasil);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -206,19 +178,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComCnpjInvalido() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoComCnpjInvalido();
+    void failsSaveComCnpjInvalido() throws Exception {
+        Banco banco = BancoTestUtil.bancoComCnpjInvalido();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco bancoComCnpjInvalido = BancoTestUtil.bancoComCnpjInvalido();
-
-        String inputJson = objectToString(bancoComCnpjInvalido);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -242,19 +208,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComNomeComMenosDeDoisCaracteres() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveComNomeComMenosDeDoisCaracteres() throws Exception {
+        Banco banco = BancoTestUtil.bancoComNomeComMenosDeDoisCaracteres();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco bancoComNomeComMenosDeDoisCaracteres = BancoTestUtil.bancoComNomeComMenosDeDoisCaracteres();
-
-        String inputJson = objectToString(bancoComNomeComMenosDeDoisCaracteres);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -278,19 +238,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComNomeComMaisDeDuzentosECinquentaECincoCaracteres() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void failsSaveComNomeComMaisDeDuzentosECinquentaECincoCaracteres() throws Exception {
+        Banco banco = BancoTestUtil.bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres = BancoTestUtil.bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres();
-
-        String inputJson = objectToString(bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
@@ -314,62 +268,24 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
     }
 
     @Test
-    void failsUpdateComBancoInexistente() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
+    void succeedsSave() throws Exception {
+        Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        bancoRepository.save(bancoDoBrasil);
-
-        String inputJson = objectToString(bancoDoBrasil);
+        String inputJson = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
-                .perform(put(uri, 0)
+                .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
-
-        assertEquals(NOT_FOUND, response.get(STATUS).getAsString());
-        assertEquals(NOT_FOUND_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Object not found", response.get(CAUSE).getAsString());
-        assertNotNull(response.get(DATE_TIME));
-
-        JsonArray errors = response.get(ERRORS).getAsJsonArray();
-
-        assertEquals(1, errors.size());
-
-        List<String> getErrorsMessages = getErrorsMessages(errors);
-
-        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNaoEncontrado", null, null)));
-    }
-
-    @Test
-    void succeedsUpdate() throws Exception {
-        Banco bancoDoBrasil = BancoTestUtil.bancoDoBrasil();
-
-        bancoRepository.save(bancoDoBrasil);
-
-        Long id = bancoDoBrasil.getId();
-
-        Banco caixaEconomicaFederal = BancoTestUtil.caixaEconomicaFederal();
-
-        String inputJson = objectToString(caixaEconomicaFederal);
-
-        MvcResult mvcResult = mockMvc
-                .perform(put(uri, id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
         assertNotNull(response.get(BancoTestUtil.BANCO_ID));
-        assertEquals(response.get(BancoTestUtil.BANCO_NUMERO).getAsInt(), caixaEconomicaFederal.getNumero());
-        assertEquals(response.get(BancoTestUtil.BANCO_CNPJ).getAsString(), caixaEconomicaFederal.getCnpj());
-        assertEquals(response.get(BancoTestUtil.BANCO_NOME).getAsString(), caixaEconomicaFederal.getNome());
+        assertEquals(response.get(BancoTestUtil.BANCO_NUMERO).getAsInt(), banco.getNumero());
+        assertEquals(response.get(BancoTestUtil.BANCO_CNPJ).getAsString(), banco.getCnpj());
+        assertEquals(response.get(BancoTestUtil.BANCO_NOME).getAsString(), banco.getNome());
     }
 }

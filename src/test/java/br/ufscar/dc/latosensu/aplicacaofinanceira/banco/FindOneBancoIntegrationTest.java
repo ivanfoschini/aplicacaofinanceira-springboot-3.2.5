@@ -1,15 +1,15 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.banco;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.BaseIntegrationTest;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.DefaultExceptionAttributes;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.service.SecurityService;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.util.IntegrationTestUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.security.SecurityUtil;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.util.BancoTestUtil;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.util.TestUtil;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.nio.charset.Charset;
 import org.junit.jupiter.api.Test;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,17 +17,19 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
+class FindOneBancoIntegrationTest extends IntegrationTestUtil {
 
-    private final String uri = BancoTestUtil.BANCO_SHOW_URI + TestUtil.ID_COMPLEMENT_URI;
+    private final String uri = BancoTestUtil.BANCO_SHOW_URI + IntegrationTestUtil.ID_COMPLEMENT_URI;
+
+    @Autowired
+    private SecurityService securityService;
     
     @Autowired
     private BancoRepository bancoRepository;
@@ -36,65 +38,75 @@ public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
     private MessageSource messageSource;
     
     @Test
-    public void testFindOneComUsuarioNaoAutorizado() throws Exception {
+    void failsFindOneComUsuarioNaoAutorizado() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
-        
+
         bancoRepository.save(banco);
-        
+
         Long id = banco.getId();
-        
+
         mockMvc
             .perform(get(uri, id)
-                     .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.NAO_AUTORIZADO)))
+                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
             .andExpect(status().isForbidden());
     }
-    
+
     @Test
-    public void testFindOneSemToken() throws Exception {
+    void failsFindOneSemToken() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
-        
+
         bancoRepository.save(banco);
-        
+
         Long id = banco.getId();
-        
+
         mockMvc
             .perform(get(uri, id))
             .andExpect(status().isForbidden());
     }
-    
+
     @Test
-    public void testFindOneComBancoInexistente() throws Exception {
+    void failsFindOneComBancoInexistente() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
-        
+
         bancoRepository.save(banco);
-        
+
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, 0)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN)))
+                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
-        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
-        
-        assertEquals(response.get(DefaultExceptionAttributes.EXCEPTION).getAsString(), TestUtil.NOT_FOUND_EXCEPTION);
-        assertEquals(response.get(DefaultExceptionAttributes.MESSAGE).getAsString(), messageSource.getMessage("bancoNaoEncontrado", null, null));
-    } 
-    
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
+
+        assertEquals(NOT_FOUND, response.get(STATUS).getAsString());
+        assertEquals(NOT_FOUND_EXCEPTION, response.get(EXCEPTION).getAsString());
+        assertEquals("Object not found", response.get(CAUSE).getAsString());
+        assertNotNull(response.get(DATE_TIME));
+
+        JsonArray errors = response.get(ERRORS).getAsJsonArray();
+
+        assertEquals(1, errors.size());
+
+        List<String> getErrorsMessages = getErrorsMessages(errors);
+
+        assertTrue(getErrorsMessages.contains(messageSource.getMessage("bancoNaoEncontrado", null, null)));
+    }
+
     @Test
-    public void testFindOneComSucessoParaAdmin() throws Exception {
+    void succeedsFindOneParaAdmin() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
-        
+
         bancoRepository.save(banco);
-        
+
         Long id = banco.getId();
-        
+
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, id)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.ADMIN)))
+                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
         assertEquals(response.get(BancoTestUtil.BANCO_ID).getAsLong(), id);
         assertEquals(response.get(BancoTestUtil.BANCO_NUMERO).getAsInt(), banco.getNumero());
@@ -103,20 +115,20 @@ public class FindOneBancoIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void testFindOneComSucessoParaFuncionario() throws Exception {
+    void succeedsFindOneParaFuncionario() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
-        
+
         bancoRepository.save(banco);
-        
+
         Long id = banco.getId();
-        
+
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, id)
-                        .header(TestUtil.TOKEN, new SecurityUtil().getToken(TestUtil.FUNCIONARIO)))
+                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
+        JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
         assertEquals(response.get(BancoTestUtil.BANCO_ID).getAsLong(), id);
         assertEquals(response.get(BancoTestUtil.BANCO_NUMERO).getAsInt(), banco.getNumero());
