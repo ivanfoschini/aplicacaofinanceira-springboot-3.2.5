@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,39 +30,40 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/banco")
+@Tag(name = "Banco")
 @ApiResponse(responseCode = "401", description = "Usuário não autorizado a acessar a aplicação",
         content = @Content(mediaType = "application/json"))
 @ApiResponse(responseCode = "403", description = "Papel não autorizado a acessar o recurso",
         content = @Content(mediaType = "application/json"))
 public class BancoController {
 
-    public static final String REQUEST_EXAMPLE = """
-                                                {
-                                                  "numero": 10,
-                                                  "cnpj": "00000000000191",
-                                                  "nome": "Banco do Brasil"
-                                                }
-                                                """;
-
-    public static final String RESPONSE_EXAMPLE = """
-                                                  {
-                                                    "id": 1,
-                                                    "numero": 10,
-                                                    "cnpj": "00000000000191",
-                                                    "nome": "Banco do Brasil"
-                                                   }
-                                                   """;
-
     @Autowired
     private BancoService bancoService;
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Exclui um banco",
+            parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
+                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Banco excluído com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Não foi possível processar a requisição",
+                    content = @Content(mediaType = "application/json"))
+    })
     public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
         bancoService.delete(id);
     }
 
     @GetMapping("/list")
+    @Operation(summary = "Retorna uma listagem de bancos, ordenados pelo nome do banco",
+            parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
+                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listagem dos bancos encontrados",
+                    content = { @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "[{ \"id\": 1, \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }, { \"id\": 2, \"numero\": 20, \"cnpj\": \"00360305000104\", \"nome\": \"Caixa Econômica Federal\" }]"),
+                            schema = @Schema(implementation = Banco.class)) })
+    })
     public List<Banco> findAll() {
         return bancoService.findAll();
     }
@@ -75,7 +77,7 @@ public class BancoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Informações do banco encontrado",
                     content = { @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = RESPONSE_EXAMPLE),
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
                             schema = @Schema(implementation = Banco.class)) }),
             @ApiResponse(responseCode = "404", description = "Banco não encontrado",
                     content = @Content(mediaType = "application/json"))
@@ -84,19 +86,17 @@ public class BancoController {
         return bancoService.findById(id);
     }
 
-    @Operation(summary = "Insere um banco",
+    @Operation(summary = "Insere um novo banco",
             parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
                     in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
     @io.swagger.v3.oas.annotations.parameters.RequestBody(content = { @Content(mediaType = "application/json",
-                                                        examples = @ExampleObject(value = REQUEST_EXAMPLE),
+                                                        examples = @ExampleObject(value = "{ \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
                                                         schema = @Schema(implementation = Banco.class)) })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Banco inserido com sucesso",
                     content = { @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = RESPONSE_EXAMPLE),
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
                             schema = @Schema(implementation = Banco.class)) }),
-            @ApiResponse(responseCode = "400", description = "Requisição mal formada",
-                    content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "422", description = "Não foi possível processar a requisição",
                     content = @Content(mediaType = "application/json"))
     })
@@ -107,6 +107,22 @@ public class BancoController {
     }
 
     @PutMapping("/update/{id}")
+    @Operation(summary = "Altera os dados de um banco",
+            parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
+                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = { @Content(mediaType = "application/json",
+            examples = @ExampleObject(value = "{ \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
+            schema = @Schema(implementation = Banco.class)) })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Banco alterado com sucesso",
+                    content = { @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{ \"id\": 1, \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
+                            schema = @Schema(implementation = Banco.class)) }),
+            @ApiResponse(responseCode = "404", description = "Banco não encontrado",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "422", description = "Não foi possível processar a requisição",
+                    content = @Content(mediaType = "application/json"))
+    })
     public Banco update(@PathVariable("id") long id, @RequestBody @Valid Banco banco) throws NotFoundException, NotUniqueException {
         return bancoService.update(id, banco);
     }
