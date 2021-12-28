@@ -37,9 +37,8 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(EmptyCollectionException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleEmptyCollectionException(EmptyCollectionException exception) {
-        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, "Object association is empty", exception.getMessage());
+        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, messageSource.getMessage("causeEmptyCollectionException", null, null), exception.getMessage());
 
         return new ResponseEntity<>(customExceptionError, new HttpHeaders(), customExceptionError.getStatus());
     }
