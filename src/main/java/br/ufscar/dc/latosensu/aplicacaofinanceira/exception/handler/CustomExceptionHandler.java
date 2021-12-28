@@ -47,25 +47,22 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(MoreThanOneAccountClientException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleMoreThanOneAccountClientException(MoreThanOneAccountClientException exception) {
-        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, "More than one account client was supplied", exception.getMessage());
+        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, messageSource.getMessage("causeMoreThanOneAccountClientException", null, null), exception.getMessage());
 
         return new ResponseEntity<>(customExceptionError, new HttpHeaders(), customExceptionError.getStatus());
     }
 
     @ExceptionHandler(MoreThanOneAccountOwnershipException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleMoreThanOneAccountOwnershipException(MoreThanOneAccountOwnershipException exception) {
-        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, "More than one account ownership was supplied", exception.getMessage());
+        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, messageSource.getMessage("causeMoreThanOneAccountOwnershipException", null, null), exception.getMessage());
 
         return new ResponseEntity<>(customExceptionError, new HttpHeaders(), customExceptionError.getStatus());
     }
 
     @ExceptionHandler(NoAccountOwnershipException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     protected ResponseEntity<Object> handleNoAccountOwnershipException(NoAccountOwnershipException exception) {
-        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, "No account ownership was supplied", exception.getMessage());
+        CustomExceptionError customExceptionError = new CustomExceptionError(HttpStatus.UNPROCESSABLE_ENTITY, exception, messageSource.getMessage("causeNoAccountOwnershipException", null, null), exception.getMessage());
 
         return new ResponseEntity<>(customExceptionError, new HttpHeaders(), customExceptionError.getStatus());
     }
