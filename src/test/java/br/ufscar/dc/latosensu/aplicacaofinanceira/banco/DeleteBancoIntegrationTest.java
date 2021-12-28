@@ -95,7 +95,7 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
 
         assertEquals(NOT_FOUND, response.get(STATUS).getAsString());
         assertEquals(NOT_FOUND_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Object not found", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeNotFoundException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();

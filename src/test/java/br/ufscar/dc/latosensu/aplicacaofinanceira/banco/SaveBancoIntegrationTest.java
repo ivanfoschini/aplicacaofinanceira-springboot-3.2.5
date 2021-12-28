@@ -93,14 +93,14 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
-        assertEquals(BAD_REQUEST, response.get(STATUS).getAsString());
+        assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(METHOD_ARGUMENT_NOT_VALID_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Validation errors", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeMethodArgumentNotValidException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
@@ -126,14 +126,14 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
-        assertEquals(BAD_REQUEST, response.get(STATUS).getAsString());
+        assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(METHOD_ARGUMENT_NOT_VALID_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Validation errors", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeMethodArgumentNotValidException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
@@ -165,7 +165,7 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
 
         assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(NOT_UNIQUE_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Unique database constraint violated", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeNotUniqueException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
@@ -188,14 +188,14 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
-        assertEquals(BAD_REQUEST, response.get(STATUS).getAsString());
+        assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(METHOD_ARGUMENT_NOT_VALID_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Validation errors", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeMethodArgumentNotValidException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
@@ -218,14 +218,14 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
-        assertEquals(BAD_REQUEST, response.get(STATUS).getAsString());
+        assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(METHOD_ARGUMENT_NOT_VALID_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Validation errors", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeMethodArgumentNotValidException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
@@ -248,14 +248,14 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
         JsonObject response = stringToJsonObject(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8));
 
-        assertEquals(BAD_REQUEST, response.get(STATUS).getAsString());
+        assertEquals(UNPROCESSABLE_ENTITY, response.get(STATUS).getAsString());
         assertEquals(METHOD_ARGUMENT_NOT_VALID_EXCEPTION, response.get(EXCEPTION).getAsString());
-        assertEquals("Validation errors", response.get(CAUSE).getAsString());
+        assertEquals(messageSource.getMessage("causeMethodArgumentNotValidException", null, null), response.get(CAUSE).getAsString());
         assertNotNull(response.get(DATE_TIME));
 
         JsonArray errors = response.get(ERRORS).getAsJsonArray();
