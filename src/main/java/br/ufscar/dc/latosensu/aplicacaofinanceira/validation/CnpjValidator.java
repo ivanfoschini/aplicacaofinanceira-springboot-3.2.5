@@ -1,7 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class CnpjValidator implements ConstraintValidator<Cnpj, String> {
 
