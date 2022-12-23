@@ -1,6 +1,6 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public class ClienteTitularidadeDTO {
 

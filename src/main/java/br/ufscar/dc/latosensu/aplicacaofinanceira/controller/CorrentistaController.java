@@ -4,6 +4,7 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.Correntista
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.*;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Correntista;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.service.CorrentistaService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/correntista")
