@@ -8,12 +8,17 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Servico;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Usuario;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ServicoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.UsuarioRepository;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class SecurityService {
@@ -27,7 +32,12 @@ public class SecurityService {
     @Autowired
     private MessageSource messageSource;
 
-    private static final String JWT_TOKEN_KEY = "LATOSENSU";
+    // Uma chave secreta qualquer, para ser utilizada para criptografar o token a ser gerado.
+    // Com isso, apenas quem tiver esta chave poderá gerar um token válido.
+    // Para simplificar, esta chave será deixada no próprio código, como uma constante.
+    // O ideal seria que este valor fosse recuperado de uma variável de ambiente ou de um repositório seguro.
+    // O valor da constante corresponde a "BrUFSCarDCLatoSensuAplicacaoFinanceira" em Base64.
+    private static final String JWT_TOKEN_SECRET_KEY = "QnJVRlNDYXJEQ0xhdG9TZW5zdUFwbGljYWNhb0ZpbmFuY2VpcmE=";
     private static final Long JWT_TOKEN_EXPIRATION_TIME = 86400000L; //Um dia em milisegundos
 
     public boolean authorize(String requestUri, String token) throws ForbiddenException {
@@ -68,26 +78,35 @@ public class SecurityService {
         return generateToken(usuario.getNomeDeUsuario());
     }
 
+    private Key getSecretKey() {
+        return new SecretKeySpec(Base64.getDecoder().decode(JWT_TOKEN_SECRET_KEY), SignatureAlgorithm.HS256.getJcaName());
+    }
+
     private String generateToken(String nomeDeUsuario) {
+        Key secretKey = getSecretKey();
         long nowMilliSeconds = System.currentTimeMillis();
         long expirationTime = JWT_TOKEN_EXPIRATION_TIME;
         Date now = new Date(nowMilliSeconds);
 
         return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, JWT_TOKEN_KEY)
-                .setExpiration(new Date(nowMilliSeconds + expirationTime))
-                .setIssuedAt(now)
-                .setSubject(nomeDeUsuario)
-                .compact();
+            .setSubject(nomeDeUsuario)
+            .setId(UUID.randomUUID().toString())
+            .setIssuedAt(now)
+            .setExpiration(new Date(nowMilliSeconds + expirationTime))
+            .signWith(secretKey)
+            .compact();
     }
 
     private String getNomeDeUsuarioFromToken(String token) throws ForbiddenException {
+        Key secretKey = getSecretKey();
+
         try {
-            return Jwts.parser()
-                    .setSigningKey(JWT_TOKEN_KEY)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+            return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
         } catch (Exception e) {
             throw new ForbiddenException();
         }
