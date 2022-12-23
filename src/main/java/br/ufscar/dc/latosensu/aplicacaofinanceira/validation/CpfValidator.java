@@ -1,8 +1,8 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.validation;
 
 import java.util.InputMismatchException;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class CpfValidator implements ConstraintValidator<Cpf, String> {
 
