@@ -16,7 +16,7 @@ public class IntegrationTestUtil {
     public static final String ADMIN = "admin";
     public static final String FUNCIONARIO = "funcionario";
     public static final String NAO_AUTORIZADO = "naoAutorizado";
-    public static final String TOKEN = "token";
+    public static final String AUTHORIZATION = "Authorization";
 
     public static final String DATE_TIME = "dateTime";
     public static final String ERRORS = "errors";

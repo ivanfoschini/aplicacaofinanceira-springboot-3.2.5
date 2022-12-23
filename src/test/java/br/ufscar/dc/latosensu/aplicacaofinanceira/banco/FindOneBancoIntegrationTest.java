@@ -47,7 +47,7 @@ class FindOneBancoIntegrationTest extends IntegrationTestUtil {
 
         mockMvc
             .perform(get(uri, id)
-                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
+                     .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
             .andExpect(status().isForbidden());
     }
 
@@ -72,7 +72,7 @@ class FindOneBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, 0)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN)))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
@@ -102,7 +102,7 @@ class FindOneBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, id)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -124,7 +124,7 @@ class FindOneBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
                 .perform(get(uri, id)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
                 .andExpect(status().isOk())
                 .andReturn();
 

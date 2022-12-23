@@ -48,7 +48,7 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
 
         mockMvc
             .perform(delete(uri, id)
-                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
+                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
             .andExpect(status().isForbidden());
     }
 
@@ -75,7 +75,7 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
 
         mockMvc
             .perform(delete(uri, id)
-                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
+                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
             .andExpect(status().isForbidden());
     }
 
@@ -87,7 +87,7 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
                 .perform(delete(uri, 0)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN)))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
@@ -118,7 +118,7 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
 
         mockMvc
             .perform(delete(uri, id)
-                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
+                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN)))
             .andExpect(status().isNoContent())
             .andReturn();
     }

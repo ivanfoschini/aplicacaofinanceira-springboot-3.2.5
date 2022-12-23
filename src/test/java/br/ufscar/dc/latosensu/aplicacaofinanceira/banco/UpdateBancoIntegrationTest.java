@@ -54,7 +54,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         mockMvc
             .perform(put(uri, id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO))
+                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO))
                     .content(inputJson))
             .andExpect(status().isForbidden());
     }
@@ -89,7 +89,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         mockMvc
             .perform(put(uri, id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO))
+                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO))
                     .content(inputJson))
             .andExpect(status().isForbidden());
     }
@@ -109,7 +109,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -148,7 +148,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -184,7 +184,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -220,7 +220,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -256,7 +256,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -292,7 +292,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
@@ -324,7 +324,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, 0)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -360,7 +360,7 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
+                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN))
                         .content(inputJson))
                 .andExpect(status().isOk())
                 .andReturn();
