@@ -40,7 +40,7 @@ class FindAllBancoIntegrationTest extends IntegrationTestUtil {
 
         mockMvc
             .perform(get(uri)
-                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
+                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO)))
             .andExpect(status().isForbidden());
     }
 
@@ -67,7 +67,7 @@ class FindAllBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
             .perform(get(uri)
-                    .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.ADMIN)))
+                    .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -88,7 +88,7 @@ class FindAllBancoIntegrationTest extends IntegrationTestUtil {
 
         MvcResult mvcResult = mockMvc
                 .perform(get(uri)
-                        .header(IntegrationTestUtil.AUTHORIZATION, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
+                        .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
