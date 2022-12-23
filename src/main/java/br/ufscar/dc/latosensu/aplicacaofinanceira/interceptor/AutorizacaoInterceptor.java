@@ -18,7 +18,7 @@ public class AutorizacaoInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
         String[] requestUri = request.getRequestURI().split("/");        
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader("token");
 
         if (requestUri.length < 3 || requestUri[1] == null || requestUri[2] == null ||
                 token == null || token.trim().equals("") ||
