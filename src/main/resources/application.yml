@@ -1,13 +1,6 @@
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  info:
-    env:
-      enabled: true
-
+# Perfil ativo
+# Para executar a aplicação localmente, o valor desta propriedade deve ser dev
+# Para executar a aplicação em produção, o valor desta propriedade deve ser prod
 spring:
   profiles:
-    active: dev
+    active: prod

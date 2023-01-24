@@ -1,10 +1,9 @@
 # Data source
 spring:
   datasource:
-    url: jdbc:postgresql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
-    username: ${PROD_DB_USERNAME}
-    password: ${PROD_DB_PASSWORD}
-    name: aplicacao-financeira
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
 
 # Database
   database:
@@ -18,13 +17,14 @@ spring:
 # JPA
   jpa:
     database: POSTGRESQL
-    hibernate.ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
         jdbc:
           lob:
             non_contextual_creation: true
+    hibernate:
+      ddl-auto: update # Não deve ser utilizado em produção (o correto em produção seria ddl-auto: none para evitar que a aplicação fizesse alterações diretamente na estrutura do banco de dados). Está sendo utilizado aqui apenas para facilitar o deploy. Em produção, uma ferramenta como Liquibase ou Flyway deve ser utilizada para gerenciar as alterações no banco de dados.
+    show-sql: true
 
 # Server
 server:
@@ -33,4 +33,4 @@ server:
 # Swagger
 springdoc:
   swagger-ui:
-    operations-sorter: alpha
+    enabled: false

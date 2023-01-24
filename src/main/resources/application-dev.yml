@@ -1,0 +1,36 @@
+# Data source
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aplicacao_financeira_dev
+    username: postgres
+    password: postgres
+
+# Database
+  database:
+    driverClassName: org.postgresql.Driver
+
+# Jackson
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+# JPA
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Server
+server:
+  port: 8080
+
+# Swagger
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha

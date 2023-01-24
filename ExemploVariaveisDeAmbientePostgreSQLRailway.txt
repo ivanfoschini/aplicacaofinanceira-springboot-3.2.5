@@ -1,8 +1,0 @@
-# Preencha os valores das variáveis de ambiente de acordo com os valores obtidos no Railway.
-# Uma vez preenchidos os valores, as variáveis de ambiente podem ser utilizadas para que a aplicação se conecte ao
-# banco de dados do PostgreSQL no Railway.
-PROD_DB_USERNAME=
-PROD_DB_PASSWORD=
-PROD_DB_HOST=
-PROD_DB_PORT=
-PROD_DB_NAME=
