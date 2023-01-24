@@ -4,8 +4,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/aplicacao_financeira_dev
     username: postgres
     password: postgres
+    initialization-mode: always
 
-# Database
+  # Database
   database:
     driverClassName: org.postgresql.Driver
 

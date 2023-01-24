@@ -4,6 +4,7 @@ spring:
     url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}
     username: ${PGUSER}
     password: ${PGPASSWORD}
+    initialization-mode: always
 
 # Database
   database:
