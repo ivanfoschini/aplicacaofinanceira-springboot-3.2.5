@@ -6,7 +6,7 @@ spring:
     password: postgres
     initialization-mode: always
 
-  # Database
+# Database
   database:
     driverClassName: org.postgresql.Driver
 
