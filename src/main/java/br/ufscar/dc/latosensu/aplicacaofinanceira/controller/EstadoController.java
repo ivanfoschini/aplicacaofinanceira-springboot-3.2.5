@@ -27,7 +27,7 @@ public class EstadoController {
     private EstadoService estadoService;
 
     @DeleteMapping("/delete/{id}")
-    ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
         estadoService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
