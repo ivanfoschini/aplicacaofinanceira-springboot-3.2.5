@@ -27,7 +27,7 @@ public class BancoController {
     private BancoService bancoService;
 
     @DeleteMapping("/delete/{id}")
-    ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
         bancoService.delete(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
