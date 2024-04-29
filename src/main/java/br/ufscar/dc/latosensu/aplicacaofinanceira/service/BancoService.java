@@ -1,10 +1,13 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
+import br.ufscar.dc.latosensu.aplicacaofinanceira.dto.BancoDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.BancoRepository;
 import java.util.List;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -37,38 +40,32 @@ public class BancoService {
     }
 
     @Transactional
-    public Banco save(Banco banco) throws NotUniqueException {
-        if (!isNumberUnique(banco.getNumero())) {
+    public Banco save(BancoDTO bancoDTO) throws NotUniqueException {
+        Banco banco = bancoRepository.findByNumero(bancoDTO.getNumero());
+
+        if (banco != null) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
+
+        banco = new Banco();
+
+        BeanUtils.copyProperties(bancoDTO, banco);
 
         return bancoRepository.save(banco);
     }
 
     @Transactional
-    public Banco update(long id, Banco banco) throws NotFoundException, NotUniqueException {
-        Banco bancoToUpdate = findById(id);
+    public Banco update(long id, BancoDTO bancoDTO) throws NotFoundException, NotUniqueException {
+        Banco banco = bancoRepository.findByNumeroAndDifferentId(bancoDTO.getNumero(), id);
 
-        if (!isNumberUnique(banco.getNumero(), bancoToUpdate.getId())) {
+        if (banco != null && !banco.getId().equals(id)) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
 
-        bancoToUpdate.setNumero(banco.getNumero());
-        bancoToUpdate.setCnpj(banco.getCnpj());
-        bancoToUpdate.setNome(banco.getNome());
+        banco = findById(id);
 
-        return bancoRepository.save(bancoToUpdate);
-    }
+        BeanUtils.copyProperties(bancoDTO, banco);
 
-    private boolean isNumberUnique(Integer numero) {
-        Banco banco = bancoRepository.findByNumero(numero);
-        
-        return banco == null;
-    }
-    
-    private boolean isNumberUnique(Integer numero, Long id) {
-        Banco banco = bancoRepository.findByNumeroAndDifferentId(numero, id);
-        
-        return banco == null;
+        return bancoRepository.save(banco);
     }
 }

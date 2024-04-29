@@ -12,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "estado")
@@ -25,8 +23,6 @@ public class Estado {
     @Column(name = "estado_id", nullable = false)
     private Long id;
 
-    @NotNull(message = "{estadoNomeNaoPodeSerNulo}")
-    @Size(min = 2, max = 255, message = "{estadoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
     @Column(name = "nome", nullable = false, length = 255, unique = true)
     private String nome;
 
