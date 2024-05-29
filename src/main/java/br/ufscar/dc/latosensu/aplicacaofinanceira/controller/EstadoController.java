@@ -1,6 +1,5 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.dto.EstadoDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
@@ -48,16 +47,16 @@ public class EstadoController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Estado> save(@RequestBody @Valid EstadoDTO estadoDTO) throws NotUniqueException {
-        Estado estado = estadoService.save(estadoDTO);
+    public ResponseEntity<Estado> save(@RequestBody @Valid Estado estado) throws NotUniqueException {
+        Estado savedEstado = estadoService.save(estado);
 
-        return new ResponseEntity<>(estado, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedEstado, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Estado> update(@PathVariable("id") long id, @RequestBody @Valid EstadoDTO estadoDTO) throws NotFoundException, NotUniqueException {
-        Estado estado = estadoService.update(id, estadoDTO);
+    public ResponseEntity<Estado> update(@PathVariable("id") long id, @RequestBody @Valid Estado estado) throws NotFoundException, NotUniqueException {
+        Estado updatedEstado = estadoService.update(id, estado);
 
-        return new ResponseEntity<>(estado, HttpStatus.OK);
+        return new ResponseEntity<>(updatedEstado, HttpStatus.OK);
     }
 }
