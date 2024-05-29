@@ -3,7 +3,6 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
