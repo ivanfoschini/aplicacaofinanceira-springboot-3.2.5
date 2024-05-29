@@ -1,14 +1,11 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.dto.EstadoDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.EstadoRepository;
 import java.util.List;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Sort;
@@ -21,7 +18,7 @@ public class EstadoService {
 
     @Autowired
     private EstadoRepository estadoRepository;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -37,38 +34,30 @@ public class EstadoService {
 
     public List<Estado> findAll() {
         return estadoRepository.findAll(Sort.by("nome"));
-    }    
+    }
 
     public Estado findById(long id) throws NotFoundException {
         return estadoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("estadoNaoEncontrado", null, null)));
     }
 
-    public Estado save(EstadoDTO estadoDTO) throws NotUniqueException {
-        Estado estado = estadoRepository.findByNome(estadoDTO.getNome());
-
-        if (estado != null) {
+    public Estado save(Estado estado) throws NotUniqueException {
+        if (estadoRepository.findByNome(estado.getNome()) != null) {
             throw new NotUniqueException(messageSource.getMessage("estadoNomeDeveSerUnico", null, null));
         }
-
-        estado = new Estado();
-
-        BeanUtils.copyProperties(estadoDTO, estado);
 
         return estadoRepository.save(estado);
     }
 
-    public Estado update(long id, EstadoDTO estadoDTO) throws NotFoundException, NotUniqueException {
-        Estado estado = estadoRepository.findByNomeAndDifferentId(estadoDTO.getNome(), id);
+    public Estado update(long id, Estado estado) throws NotFoundException, NotUniqueException {
+        Estado estadoToUpdate = findById(id);
 
-        if (estado != null && !estado.getId().equals(id)) {
+        if (estadoRepository.findByNomeAndDifferentId(estado.getNome(), estadoToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("estadoNomeDeveSerUnico", null, null));
         }
 
-        estado = findById(id);
+        estadoToUpdate.setNome(estado.getNome());
 
-        BeanUtils.copyProperties(estadoDTO, estado);
-
-        return estadoRepository.save(estado);
+        return estadoRepository.save(estadoToUpdate);
     }
 }
