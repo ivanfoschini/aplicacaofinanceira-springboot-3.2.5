@@ -33,7 +33,9 @@ public class EstadoService {
     }
 
     public List<Estado> findAll() {
-        return estadoRepository.findAll(Sort.by("nome"));
+        List<Estado> estados = estadoRepository.findAll(Sort.by("nome"));
+
+        return estados;
     }
 
     public Estado findById(long id) throws NotFoundException {
