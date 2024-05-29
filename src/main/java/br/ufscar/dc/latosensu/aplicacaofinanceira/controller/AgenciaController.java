@@ -1,6 +1,5 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.controller;
 
-import br.ufscar.dc.latosensu.aplicacaofinanceira.dto.AgenciaDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
@@ -48,16 +47,16 @@ public class AgenciaController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Agencia> save(@RequestBody @Valid AgenciaDTO agenciaDTO) throws NotFoundException, NotUniqueException {
-        Agencia agencia = agenciaService.save(agenciaDTO);
+    public ResponseEntity<Agencia> save(@RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
+        Agencia savedAgencia = agenciaService.save(agencia);
 
-        return new ResponseEntity<>(agencia, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedAgencia, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Agencia> update(@PathVariable("id") long id, @RequestBody @Valid AgenciaDTO agenciaDTO) throws NotFoundException, NotUniqueException {
-        Agencia agencia = agenciaService.update(id, agenciaDTO);
+    public ResponseEntity<Agencia> update(@PathVariable("id") long id, @RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
+        Agencia updatedAgencia = agenciaService.update(id, agencia);
 
-        return new ResponseEntity<>(agencia, HttpStatus.OK);
+        return new ResponseEntity<>(updatedAgencia, HttpStatus.OK);
     }
 }
