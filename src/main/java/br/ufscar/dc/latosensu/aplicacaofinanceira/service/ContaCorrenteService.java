@@ -3,8 +3,6 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Conta;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.ContaCorrente;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ContaCorrenteRepository;
 import java.util.List;
@@ -38,7 +36,9 @@ public class ContaCorrenteService {
     }
     
     public List<ContaCorrente> findAll() {
-        return contaCorrenteRepository.findAll(Sort.by("numero"));
+        List<ContaCorrente> contasCorrentes = contaCorrenteRepository.findAll(Sort.by("numero"));
+
+        return contasCorrentes;
     }    
 
     public ContaCorrente findById(long id) throws NotFoundException {
@@ -47,9 +47,9 @@ public class ContaCorrenteService {
     }
     
     public ContaCorrente save(ContaCorrente contaCorrente) throws NotFoundException, NotUniqueException {
-        validateAgencia(contaCorrente.getAgencia());
+        agenciaService.findById(contaCorrente.getAgencia().getId());
         
-        if (!isNumberUnique(contaCorrente.getNumero())) {
+        if (contaCorrenteRepository.findByNumero(contaCorrente.getNumero()) != null) {
             throw new NotUniqueException(messageSource.getMessage("contaNumeroDeveSerUnico", null, null));
         }
 
@@ -57,11 +57,11 @@ public class ContaCorrenteService {
     }
 
     public ContaCorrente update(long id, ContaCorrente contaCorrente) throws NotFoundException, NotUniqueException {
-        validateAgencia(contaCorrente.getAgencia());
+        agenciaService.findById(contaCorrente.getAgencia().getId());
         
         ContaCorrente contaCorrenteToUpdate = findById(id);
 
-        if (!isNumberUnique(contaCorrente.getNumero(), contaCorrenteToUpdate.getId())) {
+        if (contaCorrenteRepository.findByNumeroAndDifferentId(contaCorrente.getNumero(), contaCorrenteToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("contaNumeroDeveSerUnico", null, null));
         }
 
@@ -72,21 +72,5 @@ public class ContaCorrenteService {
         contaCorrenteToUpdate.setAgencia(contaCorrente.getAgencia());
 
         return contaCorrenteRepository.save(contaCorrenteToUpdate);
-    }
-    
-    private boolean isNumberUnique(Integer numero) {
-        Conta conta = contaCorrenteRepository.findByNumero(numero);
-        
-        return conta == null;
-    }
-    
-    private boolean isNumberUnique(Integer numero, Long id) {
-        Conta conta = contaCorrenteRepository.findByNumeroAndDifferentId(numero, id);
-        
-        return conta == null;
-    } 
-    
-    private void validateAgencia(Agencia agencia) throws NotFoundException {
-        agenciaService.findById(agencia.getId());
     }
 }

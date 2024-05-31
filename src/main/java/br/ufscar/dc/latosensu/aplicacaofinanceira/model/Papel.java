@@ -4,6 +4,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +33,7 @@ public class Papel {
             inverseJoinColumns={@JoinColumn(name="usuario_id")})
     private List<Usuario> usuarios;
     
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name="papel_servico",
             joinColumns={@JoinColumn(name="papel_id")},
             inverseJoinColumns={@JoinColumn(name="servico_id")})

@@ -1,6 +1,5 @@
 # Perfil ativo
-# Para executar a aplicação localmente, o valor desta propriedade deve ser dev
-# Para executar a aplicação em produção, o valor desta propriedade deve ser prod
+# Para executar a aplicação em produção, o valor desta propriedade deve ser prd
 spring:
   profiles:
-    active: prod
+    active: prd

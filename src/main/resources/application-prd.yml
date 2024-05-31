@@ -1,0 +1,37 @@
+# Data source
+spring:
+  datasource:
+    url: jdbc:postgresql://dpg-cpd26g0cmk4c73dq3bn0-a.oregon-postgres.render.com:5432/aplicacao_financeira_prd
+    username: aplicacao_financeira_prd_user
+    password: KDQa7slTie3kOcAfqvSnizus0X2eOLHF
+    initialization-mode: always
+
+  # Database
+  database:
+    driverClassName: org.postgresql.Driver
+
+  # Jackson
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+
+  # JPA
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: update # Não deve ser utilizado em produção (o correto em produção seria ddl-auto: none para evitar que a aplicação fizesse alterações diretamente na estrutura do banco de dados). Está sendo utilizado aqui apenas para facilitar o deploy. Em produção, uma ferramenta como Liquibase ou Flyway deve ser utilizada para gerenciar as alterações no banco de dados.
+    show-sql: true
+
+# Server
+server:
+  port: 8080
+
+  # Swagger
+  springdoc:
+    swagger-ui:
+      enabled: false

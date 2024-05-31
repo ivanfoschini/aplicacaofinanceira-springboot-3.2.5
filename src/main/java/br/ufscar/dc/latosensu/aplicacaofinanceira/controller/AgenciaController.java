@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,29 +29,37 @@ public class AgenciaController {
     private AgenciaService agenciaService;
 
     @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotEmptyCollectionException, NotFoundException {
         agenciaService.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/list")
-    public List<Agencia> findAll() {
-        return agenciaService.findAll();
+    public ResponseEntity<List<Agencia>> findAll() {
+        List<Agencia> agencias = agenciaService.findAll();
+
+        return new ResponseEntity<>(agencias, HttpStatus.OK);
     }
 
     @GetMapping("/show/{id}")
-    public Agencia findById(@PathVariable("id") long id) throws NotFoundException {
-        return agenciaService.findById(id);
+    public ResponseEntity<Agencia> findById(@PathVariable("id") long id) throws NotFoundException {
+        Agencia agencia = agenciaService.findById(id);
+
+        return new ResponseEntity<>(agencia, HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Agencia save(@RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
-        return agenciaService.save(agencia);
+    public ResponseEntity<Agencia> save(@RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
+        Agencia savedAgencia = agenciaService.save(agencia);
+
+        return new ResponseEntity<>(savedAgencia, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public Agencia update(@PathVariable("id") long id, @RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
-        return agenciaService.update(id, agencia);
+    public ResponseEntity<Agencia> update(@PathVariable("id") long id, @RequestBody @Valid Agencia agencia) throws NotFoundException, NotUniqueException {
+        Agencia updatedAgencia = agenciaService.update(id, agencia);
+
+        return new ResponseEntity<>(updatedAgencia, HttpStatus.OK);
     }
 }

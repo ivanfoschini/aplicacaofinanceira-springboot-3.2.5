@@ -49,13 +49,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Long id = bancoDoBrasil.getId();
 
-        String inputJson = objectToString(bancoDoBrasil);
+        String requestBody = objectToString(bancoDoBrasil);
 
         mockMvc
             .perform(put(uri, id)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO))
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
 
@@ -67,12 +67,12 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Long id = bancoDoBrasil.getId();
 
-        String inputJson = objectToString(bancoDoBrasil);
+        String requestBody = objectToString(bancoDoBrasil);
 
         mockMvc
             .perform(put(uri, id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
 
@@ -84,13 +84,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Long id = bancoDoBrasil.getId();
 
-        String inputJson = objectToString(bancoDoBrasil);
+        String requestBody = objectToString(bancoDoBrasil);
 
         mockMvc
             .perform(put(uri, id)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO))
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
 
@@ -104,13 +104,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco bancoSemCamposObrigatorios = BancoTestUtil.bancoSemCamposObrigatorios();
 
-        String inputJson = objectToString(bancoSemCamposObrigatorios);
+        String requestBody = objectToString(bancoSemCamposObrigatorios);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -143,13 +143,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco bancoComNumeroMenorDoQueUm = BancoTestUtil.bancoComNumeroMenorDoQueUm();
 
-        String inputJson = objectToString(bancoComNumeroMenorDoQueUm);
+        String requestBody = objectToString(bancoComNumeroMenorDoQueUm);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -179,13 +179,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Long id = caixaEconomicaFederal.getId();
 
-        String inputJson = objectToString(bancoDoBrasil);
+        String requestBody = objectToString(bancoDoBrasil);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -215,13 +215,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco bancoComCnpjInvalido = BancoTestUtil.bancoComCnpjInvalido();
 
-        String inputJson = objectToString(bancoComCnpjInvalido);
+        String requestBody = objectToString(bancoComCnpjInvalido);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -251,13 +251,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco bancoComNomeComMenosDeDoisCaracteres = BancoTestUtil.bancoComNomeComMenosDeDoisCaracteres();
 
-        String inputJson = objectToString(bancoComNomeComMenosDeDoisCaracteres);
+        String requestBody = objectToString(bancoComNomeComMenosDeDoisCaracteres);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -287,13 +287,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres = BancoTestUtil.bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres();
 
-        String inputJson = objectToString(bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres);
+        String requestBody = objectToString(bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -319,13 +319,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         bancoRepository.save(bancoDoBrasil);
 
-        String inputJson = objectToString(bancoDoBrasil);
+        String requestBody = objectToString(bancoDoBrasil);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isNotFound())
                 .andReturn();
 
@@ -355,13 +355,13 @@ class UpdateBancoIntegrationTest extends IntegrationTestUtil {
 
         Banco caixaEconomicaFederal = BancoTestUtil.caixaEconomicaFederal();
 
-        String inputJson = objectToString(caixaEconomicaFederal);
+        String requestBody = objectToString(caixaEconomicaFederal);
 
         MvcResult mvcResult = mockMvc
                 .perform(put(uri, id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isOk())
                 .andReturn();
 

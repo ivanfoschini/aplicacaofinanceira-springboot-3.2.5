@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,17 +27,23 @@ public class CorrentistaController {
     private CorrentistaService correntistaService;
     
     @PostMapping("/associate")
-    public List<Correntista> associate(@RequestBody @Valid CorrentistaDTO correntistaDTO) throws HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
-        return correntistaService.associate(correntistaDTO);
+    public ResponseEntity<List<Correntista>> associate(@RequestBody @Valid CorrentistaDTO correntistaDTO) throws HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
+        List<Correntista> correntistas = correntistaService.associate(correntistaDTO);
+
+        return new ResponseEntity<>(correntistas, HttpStatus.OK);
     }
     
     @GetMapping("/listByCliente/{id}")
-    public List<Correntista> listByCliente(@PathVariable("id") long id) {
-        return correntistaService.listByCliente(id);
+    public ResponseEntity<List<Correntista>> listByCliente(@PathVariable("id") long id) {
+        List<Correntista> correntistas = correntistaService.listByCliente(id);
+
+        return new ResponseEntity<>(correntistas, HttpStatus.OK);
     }
     
     @GetMapping("/listByConta/{id}")
-    public List<Correntista> listByConta(@PathVariable("id") long id) {
-        return correntistaService.listByConta(id);
+    public ResponseEntity<List<Correntista>> listByConta(@PathVariable("id") long id) {
+        List<Correntista> correntistas = correntistaService.listByConta(id);
+
+        return new ResponseEntity<>(correntistas, HttpStatus.OK);
     }
 }
