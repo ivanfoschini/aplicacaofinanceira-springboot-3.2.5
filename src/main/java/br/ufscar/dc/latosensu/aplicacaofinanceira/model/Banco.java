@@ -41,7 +41,7 @@ public class Banco {
     @Size(min = 2, max = 255, message = "{bancoNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
     @Column(name = "nome", nullable = false, length = 255)
     private String nome;
-    
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "banco", fetch = FetchType.LAZY)
     private List<Agencia> agencias;

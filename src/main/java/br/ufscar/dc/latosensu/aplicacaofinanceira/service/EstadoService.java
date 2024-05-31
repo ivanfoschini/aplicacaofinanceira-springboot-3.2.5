@@ -18,7 +18,7 @@ public class EstadoService {
 
     @Autowired
     private EstadoRepository estadoRepository;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -33,8 +33,10 @@ public class EstadoService {
     }
 
     public List<Estado> findAll() {
-        return estadoRepository.findAll(Sort.by("nome"));
-    }    
+        List<Estado> estados = estadoRepository.findAll(Sort.by("nome"));
+
+        return estados;
+    }
 
     public Estado findById(long id) throws NotFoundException {
         return estadoRepository.findById(id)
@@ -42,7 +44,7 @@ public class EstadoService {
     }
 
     public Estado save(Estado estado) throws NotUniqueException {
-        if (!isNomeUnique(estado.getNome())) {
+        if (estadoRepository.findByNome(estado.getNome()) != null) {
             throw new NotUniqueException(messageSource.getMessage("estadoNomeDeveSerUnico", null, null));
         }
 
@@ -52,24 +54,12 @@ public class EstadoService {
     public Estado update(long id, Estado estado) throws NotFoundException, NotUniqueException {
         Estado estadoToUpdate = findById(id);
 
-        if (!isNomeUnique(estado.getNome(), estadoToUpdate.getId())) {
+        if (estadoRepository.findByNomeAndDifferentId(estado.getNome(), estadoToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("estadoNomeDeveSerUnico", null, null));
         }
 
         estadoToUpdate.setNome(estado.getNome());
 
         return estadoRepository.save(estadoToUpdate);
-    }
-
-    private boolean isNomeUnique(String nome) {
-        Estado estado = estadoRepository.findByNome(nome);
-        
-        return estado == null;
-    }
-    
-    private boolean isNomeUnique(String nome, Long id) {
-        Estado estado = estadoRepository.findByNomeAndDifferentId(nome, id);
-        
-        return estado == null;
     }
 }

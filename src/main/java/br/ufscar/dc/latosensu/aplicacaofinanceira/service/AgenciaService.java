@@ -4,8 +4,6 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionEx
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Banco;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.AgenciaRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class AgenciaService {
-    
+
     @Autowired
     private AgenciaRepository agenciaRepository;
-    
+
     @Autowired
     private BancoService bancoService;
-    
+
     @Autowired
     private CidadeService cidadeService;
 
     @Autowired
     private MessageSource messageSource;
-    
+
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Agencia agencia = findById(id);
 
@@ -41,8 +39,10 @@ public class AgenciaService {
     }
 
     public List<Agencia> findAll() {
-        return agenciaRepository.findAll(Sort.by("nome"));
-    }    
+        List<Agencia> agencias = agenciaRepository.findAll(Sort.by("nome"));
+
+        return agencias;
+    }
 
     public Agencia findById(long id) throws NotFoundException {
         return agenciaRepository.findById(id)
@@ -50,10 +50,10 @@ public class AgenciaService {
     }
 
     public Agencia save(Agencia agencia) throws NotFoundException, NotUniqueException {
-        validateBanco(agencia.getBanco());
-        validateCidade(agencia.getEndereco().getCidade());
-        
-        if (!isNumberUnique(agencia.getNumero())) {
+        bancoService.findById(agencia.getBanco().getId());
+        cidadeService.findById(agencia.getEndereco().getCidade().getId());
+
+        if (agenciaRepository.findByNumero(agencia.getNumero()) != null) {
             throw new NotUniqueException(messageSource.getMessage("agenciaNumeroDeveSerUnico", null, null));
         }
 
@@ -61,16 +61,16 @@ public class AgenciaService {
     }
 
     public Agencia update(long id, Agencia agencia) throws NotFoundException, NotUniqueException {
-        validateBanco(agencia.getBanco());
-        validateCidade(agencia.getEndereco().getCidade());
-        
+        bancoService.findById(agencia.getBanco().getId());
+        cidadeService.findById(agencia.getEndereco().getCidade().getId());
+
         Agencia agenciaToUpdate = findById(id);
 
         if (agenciaToUpdate == null) {
             throw new NotFoundException(messageSource.getMessage("agenciaNaoEncontrada", null, null));
         }
-        
-        if (!isNumberUnique(agencia.getNumero(), agenciaToUpdate.getId())) {
+
+        if (agenciaRepository.findByNumeroAndDifferentId(agencia.getNumero(), agenciaToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("agenciaNumeroDeveSerUnico", null, null));
         }
 
@@ -85,25 +85,5 @@ public class AgenciaService {
         agenciaToUpdate.getEndereco().setCidade(agencia.getEndereco().getCidade());
 
         return agenciaRepository.save(agenciaToUpdate);
-    }
-    
-    private boolean isNumberUnique(Integer numero) {
-        Agencia agencia = agenciaRepository.findByNumero(numero);
-        
-        return agencia == null;
-    }
-    
-    private boolean isNumberUnique(Integer numero, Long id) {
-        Agencia agencia = agenciaRepository.findByNumeroAndDifferentId(numero, id);
-        
-        return agencia == null;
-    }
-
-    private void validateBanco(Banco banco) throws NotFoundException {
-        bancoService.findById(banco.getId());
-    }
-
-    private void validateCidade(Cidade cidade) throws NotFoundException {
-        cidadeService.findById(cidade.getId());
     }
 }
