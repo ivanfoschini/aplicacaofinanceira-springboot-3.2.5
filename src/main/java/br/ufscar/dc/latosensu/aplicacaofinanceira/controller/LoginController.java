@@ -5,6 +5,8 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.TokenDTO;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.UnauthorizedException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +20,10 @@ public class LoginController {
     private SecurityService securityService;
     
     @PostMapping("/login")
-    public TokenDTO login(@RequestBody LoginDTO loginDTO) throws UnauthorizedException {
+    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO loginDTO) throws UnauthorizedException {
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setToken(securityService.login(loginDTO.getNomeDeUsuario(), loginDTO.getSenha()));
-        
-        return tokenDTO;
+
+        return new ResponseEntity<>(tokenDTO, HttpStatus.OK);
     }
 }
