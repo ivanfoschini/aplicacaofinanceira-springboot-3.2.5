@@ -1,4 +1,4 @@
-package br.ufscar.dc.latosensu.aplicacaofinanceira;
+package br.ufscar.dc.latosensu.aplicacaofinanceira.config;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.interceptor.AutorizacaoInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
