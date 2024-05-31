@@ -46,7 +46,9 @@ public class ClientePessoaJuridicaService {
     }
 
     public List<ClientePessoaJuridica> findAll() {
-        return clientePessoaJuridicaRepository.findAll(Sort.by("nome"));
+        List<ClientePessoaJuridica> clientesPessoasJuridicas = clientePessoaJuridicaRepository.findAll(Sort.by("nome"));
+
+        return clientesPessoasJuridicas;
     }    
 
     public ClientePessoaJuridica findById(long id) throws NotFoundException {

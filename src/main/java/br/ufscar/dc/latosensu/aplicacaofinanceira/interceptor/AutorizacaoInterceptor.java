@@ -22,7 +22,7 @@ public class AutorizacaoInterceptor implements HandlerInterceptor {
 
         if (requestUri.length < 3 || requestUri[1] == null || requestUri[2] == null ||
                 token == null || token.trim().equals("") ||
-                !securityService.authorize("/" + requestUri[1] + "/" + requestUri[2], token)) {
+                !securityService.authorize(token, "/" + requestUri[1] + "/" + requestUri[2])) {
             throw new ForbiddenException();
         } 
           

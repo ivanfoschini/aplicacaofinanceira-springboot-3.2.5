@@ -40,15 +40,14 @@ public class SecurityService {
     private static final String JWT_TOKEN_SECRET_KEY = "QnJVRlNDYXJEQ0xhdG9TZW5zdUFwbGljYWNhb0ZpbmFuY2VpcmE=";
     private static final Long JWT_TOKEN_EXPIRATION_TIME = 86400000L; //Um dia em milisegundos
 
-    public boolean authorize(String requestUri, String token) throws ForbiddenException {
+    public boolean authorize(String token, String requestUri) throws ForbiddenException {
         String nomeDeUsuario = getNomeDeUsuarioFromToken(token);
         Usuario usuario = usuarioRepository.findByNomeDeUsuario(nomeDeUsuario);
-        Servico servico = servicoRepository.findByUri(requestUri);
 
-        if (usuario != null && servico != null) {
-            for (Papel papelDoUsuario: usuario.getPapeis()) {
-                for (Papel papelAssociadoAoServico: servico.getPapeis()) {
-                    if (papelDoUsuario.getNome().equals(papelAssociadoAoServico.getNome())) {
+        if (usuario != null) {
+            for (Papel papel : usuario.getPapeis()) {
+                for (Servico servico: papel.getServicos()) {
+                    if (servico.getUri().equals(requestUri)) {
                         return true;
                     }
                 }
@@ -113,7 +112,7 @@ public class SecurityService {
     }
 
     /**
-     // Este método não é utilizado mas foi mantido para mostrar como foram geradas as senhas para os usuários
+     // Este método não é utilizado, mas foi mantido para mostrar como foram geradas as senhas para os usuários
      private String generateBCrypt(String text) {
      return BCrypt.withDefaults().hashToString(10, text.toCharArray());
      }

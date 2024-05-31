@@ -17,7 +17,7 @@ public class BancoService {
 
     @Autowired
     private BancoRepository bancoRepository;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -33,8 +33,10 @@ public class BancoService {
     }
 
     public List<Banco> findAll() {
-        return bancoRepository.findAll(Sort.by("nome"));
-    }    
+        List<Banco> bancos = bancoRepository.findAll(Sort.by("nome"));
+
+        return bancos;
+    }
 
     public Banco findById(long id) throws NotFoundException {
         return bancoRepository.findById(id)
@@ -43,7 +45,7 @@ public class BancoService {
 
     @Transactional
     public Banco save(Banco banco) throws NotUniqueException {
-        if (!isNumberUnique(banco.getNumero())) {
+        if (bancoRepository.findByNumero(banco.getNumero()) != null) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
 
@@ -54,7 +56,7 @@ public class BancoService {
     public Banco update(long id, Banco banco) throws NotFoundException, NotUniqueException {
         Banco bancoToUpdate = findById(id);
 
-        if (!isNumberUnique(banco.getNumero(), bancoToUpdate.getId())) {
+        if (bancoRepository.findByNumeroAndDifferentId(banco.getNumero(), bancoToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("bancoNumeroDeveSerUnico", null, null));
         }
 
@@ -63,17 +65,5 @@ public class BancoService {
         bancoToUpdate.setNome(banco.getNome());
 
         return bancoRepository.save(bancoToUpdate);
-    }
-
-    private boolean isNumberUnique(Integer numero) {
-        Banco banco = bancoRepository.findByNumero(numero);
-        
-        return banco == null;
-    }
-    
-    private boolean isNumberUnique(Integer numero, Long id) {
-        Banco banco = bancoRepository.findByNumeroAndDifferentId(numero, id);
-        
-        return banco == null;
     }
 }
