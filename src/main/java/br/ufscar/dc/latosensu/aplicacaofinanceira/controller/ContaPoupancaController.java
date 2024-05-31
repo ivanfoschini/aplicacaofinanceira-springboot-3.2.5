@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,7 +26,6 @@ public class ContaPoupancaController {
     private ContaPoupancaService contaPoupancaService;
 
     @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
         contaPoupancaService.delete(id);
 
@@ -49,7 +47,6 @@ public class ContaPoupancaController {
     }
 
     @PostMapping("/save")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ContaPoupanca> save(@RequestBody @Valid ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
         ContaPoupanca savedContaPoupanca = contaPoupancaService.save(contaPoupanca);
 
