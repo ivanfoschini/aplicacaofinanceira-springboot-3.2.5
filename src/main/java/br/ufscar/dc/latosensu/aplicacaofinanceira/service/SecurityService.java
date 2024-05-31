@@ -8,17 +8,15 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Servico;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Usuario;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ServicoRepository;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.UsuarioRepository;
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.spec.SecretKeySpec;
 
 @Service
 public class SecurityService {
@@ -77,34 +75,36 @@ public class SecurityService {
         return generateToken(usuario.getNomeDeUsuario());
     }
 
-    private Key getSecretKey() {
-        return new SecretKeySpec(Base64.getDecoder().decode(JWT_TOKEN_SECRET_KEY), SignatureAlgorithm.HS256.getJcaName());
-    }
-
-    private String generateToken(String nomeDeUsuario) {
-        Key secretKey = getSecretKey();
+    public String generateToken(String nomeDeUsuario) {
+        SecretKey secretKey = getSecretKey();
         long nowMilliSeconds = System.currentTimeMillis();
         long expirationTime = JWT_TOKEN_EXPIRATION_TIME;
         Date now = new Date(nowMilliSeconds);
 
         return Jwts.builder()
-            .setSubject(nomeDeUsuario)
-            .setId(UUID.randomUUID().toString())
-            .setIssuedAt(now)
-            .setExpiration(new Date(nowMilliSeconds + expirationTime))
+            .id(UUID.randomUUID().toString())
+            .subject(nomeDeUsuario)
+            .issuedAt(now)
+            .expiration(new Date(nowMilliSeconds + expirationTime))
             .signWith(secretKey)
             .compact();
     }
 
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(JWT_TOKEN_SECRET_KEY);
+
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     private String getNomeDeUsuarioFromToken(String token) throws ForbiddenException {
-        Key secretKey = getSecretKey();
+        SecretKey secretKey = getSecretKey();
 
         try {
-            return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+            return Jwts.parser()
+                .verifyWith(secretKey)
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
         } catch (Exception e) {
             throw new ForbiddenException();
