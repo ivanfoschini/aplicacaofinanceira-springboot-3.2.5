@@ -31,7 +31,9 @@ public class ContaPoupancaService {
     }
     
     public List<ContaPoupanca> findAll() {
-        return contaPoupancaRepository.findAll(Sort.by("numero"));
+        List<ContaPoupanca> contasPoupancas = contaPoupancaRepository.findAll(Sort.by("numero"));
+
+        return contasPoupancas;
     }    
 
     public ContaPoupanca findById(long id) throws NotFoundException {
