@@ -5,7 +5,6 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Cidade;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Endereco;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Estado;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.CidadeRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,10 @@ public class CidadeService {
 
     @Autowired
     private CidadeRepository cidadeRepository;
-    
+
     @Autowired
     private EstadoService estadoService;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -38,8 +37,10 @@ public class CidadeService {
     }
 
     public List<Cidade> findAll() {
-        return cidadeRepository.findAll(Sort.by("nome"));
-    }    
+        List<Cidade> cidades = cidadeRepository.findAll(Sort.by("nome"));
+
+        return cidades;
+    }
 
     public Cidade findById(long id) throws NotFoundException {
         return cidadeRepository.findById(id)
@@ -47,9 +48,9 @@ public class CidadeService {
     }
 
     public Cidade save(Cidade cidade) throws NotFoundException, NotUniqueException {
-        validateEstado(cidade.getEstado());
-        
-        if (!isNomeUniqueForEstado(cidade.getNome(), cidade.getEstado().getId())) {
+        estadoService.findById(cidade.getEstado().getId());
+
+        if (cidadeRepository.findByNomeAndEstado(cidade.getNome(), cidade.getEstado().getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("cidadeNomeDeveSerUnicoParaEstado", null, null));
         }
 
@@ -57,11 +58,11 @@ public class CidadeService {
     }
 
     public Cidade update(long id, Cidade cidade) throws NotFoundException, NotUniqueException {
-        validateEstado(cidade.getEstado());
-        
+        estadoService.findById(cidade.getEstado().getId());
+
         Cidade cidadeToUpdate = findById(id);
 
-        if (!isNomeUniqueForEstado(cidade.getNome(), cidade.getEstado().getId(), cidadeToUpdate.getId())) {
+        if (cidadeRepository.findByNomeAndEstadoAndDifferentId(cidade.getNome(), cidade.getEstado().getId(), cidadeToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("cidadeNomeDeveSerUnicoParaEstado", null, null));
         }
 
@@ -79,21 +80,5 @@ public class CidadeService {
                 throw new NotFoundException(messageSource.getMessage("cidadeNaoEncontrada", null, null));
             }
         }
-    }
-    
-    private boolean isNomeUniqueForEstado(String nomeDaCidade, Long idDoEstado) {        
-        Cidade cidade = cidadeRepository.findByNomeAndEstado(nomeDaCidade, idDoEstado);
-
-        return cidade == null;
-    }
-
-    private boolean isNomeUniqueForEstado(String nomeDaCidade, Long idDoEstadoToUpdate, Long idDaCidadeCurrent) {
-        Cidade cidade = cidadeRepository.findByNomeAndEstadoAndDifferentId(nomeDaCidade, idDoEstadoToUpdate, idDaCidadeCurrent);
-
-        return cidade == null;
-    }
-
-    private void validateEstado(Estado estado) throws NotFoundException {
-        estadoService.findById(estado.getId());
     }
 }
