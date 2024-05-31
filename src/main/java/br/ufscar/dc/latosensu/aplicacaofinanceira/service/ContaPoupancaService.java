@@ -3,8 +3,6 @@ package br.ufscar.dc.latosensu.aplicacaofinanceira.service;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotEmptyCollectionException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
-import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Conta;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.ContaPoupanca;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.ContaPoupancaRepository;
 import java.util.List;
@@ -38,7 +36,9 @@ public class ContaPoupancaService {
     }
     
     public List<ContaPoupanca> findAll() {
-        return contaPoupancaRepository.findAll(Sort.by("numero"));
+        List<ContaPoupanca> contasPoupancas = contaPoupancaRepository.findAll(Sort.by("numero"));
+
+        return contasPoupancas;
     }    
 
     public ContaPoupanca findById(long id) throws NotFoundException {
@@ -47,9 +47,9 @@ public class ContaPoupancaService {
     }
     
     public ContaPoupanca save(ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
-        validateAgencia(contaPoupanca.getAgencia());
+        agenciaService.findById(contaPoupanca.getAgencia().getId());
         
-        if (!isNumberUnique(contaPoupanca.getNumero())) {
+        if (contaPoupancaRepository.findByNumero(contaPoupanca.getNumero()) != null) {
             throw new NotUniqueException(messageSource.getMessage("contaNumeroDeveSerUnico", null, null));
         }
 
@@ -57,11 +57,11 @@ public class ContaPoupancaService {
     }
 
     public ContaPoupanca update(long id, ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
-        validateAgencia(contaPoupanca.getAgencia());
+        agenciaService.findById(contaPoupanca.getAgencia().getId());
         
         ContaPoupanca contaPoupancaToUpdate = findById(id);
 
-        if (!isNumberUnique(contaPoupanca.getNumero(), contaPoupancaToUpdate.getId())) {
+        if (contaPoupancaRepository.findByNumeroAndDifferentId(contaPoupanca.getNumero(), contaPoupancaToUpdate.getId()) != null) {
             throw new NotUniqueException(messageSource.getMessage("contaNumeroDeveSerUnico", null, null));
         }
 
@@ -74,21 +74,5 @@ public class ContaPoupancaService {
         contaPoupancaToUpdate.setAgencia(contaPoupanca.getAgencia());
 
         return contaPoupancaRepository.save(contaPoupancaToUpdate);
-    }
-    
-    private boolean isNumberUnique(Integer numero) {
-        Conta conta = contaPoupancaRepository.findByNumero(numero);
-        
-        return conta == null;
-    }
-    
-    private boolean isNumberUnique(Integer numero, Long id) {
-        Conta conta = contaPoupancaRepository.findByNumeroAndDifferentId(numero, id);
-        
-        return conta == null;
-    } 
-    
-    private void validateAgencia(Agencia agencia) throws NotFoundException {
-        agenciaService.findById(agencia.getId());
     }
 }

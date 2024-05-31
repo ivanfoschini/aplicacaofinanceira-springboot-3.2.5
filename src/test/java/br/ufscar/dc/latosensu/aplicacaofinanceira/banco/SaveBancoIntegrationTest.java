@@ -45,13 +45,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComUsuarioNaoAutorizado() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
         
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         mockMvc
             .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)                 
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.NAO_AUTORIZADO))
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
     
@@ -59,12 +59,12 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveSemToken() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         mockMvc
             .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
 
@@ -72,13 +72,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComUsuarioFuncionario() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         mockMvc
             .perform(post(uri)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.FUNCIONARIO))
-                    .content(inputJson))
+                    .content(requestBody))
             .andExpect(status().isForbidden());
     }
 
@@ -86,13 +86,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveSemCamposObrigatorios() throws Exception {
         Banco banco = BancoTestUtil.bancoSemCamposObrigatorios();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -119,13 +119,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComNumeroMenorDoQueUm() throws Exception {
         Banco banco = BancoTestUtil.bancoComNumeroMenorDoQueUm();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -151,13 +151,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
 
         bancoRepository.save(banco);
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -181,13 +181,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComCnpjInvalido() throws Exception {
         Banco banco = BancoTestUtil.bancoComCnpjInvalido();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -211,13 +211,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComNomeComMenosDeDoisCaracteres() throws Exception {
         Banco banco = BancoTestUtil.bancoComNomeComMenosDeDoisCaracteres();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -241,13 +241,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void failsSaveComNomeComMaisDeDuzentosECinquentaECincoCaracteres() throws Exception {
         Banco banco = BancoTestUtil.bancoComNomeComMaisDeDuzentosECinquentaECincoCaracteres();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn();
 
@@ -271,13 +271,13 @@ class SaveBancoIntegrationTest extends IntegrationTestUtil {
     void succeedsSave() throws Exception {
         Banco banco = BancoTestUtil.bancoDoBrasil();
 
-        String inputJson = objectToString(banco);
+        String requestBody = objectToString(banco);
 
         MvcResult mvcResult = mockMvc
                 .perform(post(uri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN))
-                        .content(inputJson))
+                        .content(requestBody))
                 .andExpect(status().isCreated())
                 .andReturn();
 
