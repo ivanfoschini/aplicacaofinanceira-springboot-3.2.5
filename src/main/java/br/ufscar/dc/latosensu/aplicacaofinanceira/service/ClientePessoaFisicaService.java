@@ -41,7 +41,9 @@ public class ClientePessoaFisicaService {
     }
 
     public List<ClientePessoaFisica> findAll() {
-        return clientePessoaFisicaRepository.findAll(Sort.by("nome"));
+        List<ClientePessoaFisica> clientesPessoasFisicas = clientePessoaFisicaRepository.findAll(Sort.by("nome"));
+
+        return clientesPessoasFisicas;
     }    
 
     public ClientePessoaFisica findById(long id) throws NotFoundException {

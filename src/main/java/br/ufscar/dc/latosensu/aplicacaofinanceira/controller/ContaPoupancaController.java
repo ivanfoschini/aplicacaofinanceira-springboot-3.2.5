@@ -8,6 +8,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,28 +28,38 @@ public class ContaPoupancaController {
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") long id) throws NotFoundException {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("id") long id) throws NotFoundException {
         contaPoupancaService.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/list")
-    public List<ContaPoupanca> findAll() {
-        return contaPoupancaService.findAll();
+    public ResponseEntity<List<ContaPoupanca>> findAll() {
+        List<ContaPoupanca> contasPoupancas = contaPoupancaService.findAll();
+
+        return new ResponseEntity<>(contasPoupancas, HttpStatus.OK);
     }
 
     @GetMapping("/show/{id}")
-    public ContaPoupanca findById(@PathVariable("id") long id) throws NotFoundException {
-        return contaPoupancaService.findById(id);
+    public ResponseEntity<ContaPoupanca> findById(@PathVariable("id") long id) throws NotFoundException {
+        ContaPoupanca contaPoupanca = contaPoupancaService.findById(id);
+
+        return new ResponseEntity<>(contaPoupanca, HttpStatus.OK);
     }
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
-    public ContaPoupanca save(@RequestBody @Valid ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
-        return contaPoupancaService.save(contaPoupanca);
+    public ResponseEntity<ContaPoupanca> save(@RequestBody @Valid ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
+        ContaPoupanca savedContaPoupanca = contaPoupancaService.save(contaPoupanca);
+
+        return new ResponseEntity<>(savedContaPoupanca, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ContaPoupanca update(@PathVariable("id") long id, @RequestBody @Valid ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
-        return contaPoupancaService.update(id, contaPoupanca);
+    public ResponseEntity<ContaPoupanca> update(@PathVariable("id") long id, @RequestBody @Valid ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
+        ContaPoupanca updatedContaPoupanca = contaPoupancaService.update(id, contaPoupanca);
+
+        return new ResponseEntity<>(updatedContaPoupanca, HttpStatus.OK);
     }
 }

@@ -24,18 +24,18 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "agencia")
 public class Agencia {
-    
+
     @Id
     @SequenceGenerator(name="Agencia_Generator", sequenceName="agencia_sequence", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="Agencia_Generator")
     @Column(name = "agencia_id", nullable = false)
     private Long id;
-    
+
     @NotNull(message = "{agenciaNumeroNaoPodeSerNulo}")
     @Min(value = 1, message = "{agenciaNumeroDeveSerMaiorDoQueZero}")
     @Column(name = "numero", nullable = false, unique = true)
     private int numero;
-    
+
     @NotNull(message = "{agenciaNomeNaoPodeSerNulo}")
     @Size(min = 2, max = 255, message = "{agenciaNomeDeveTerEntreDoisEDuzentosECinquentaECincoCaracteres}")
     @Column(name = "nome", nullable = false, length = 255)
@@ -46,16 +46,16 @@ public class Agencia {
     @JoinColumn(name = "endereco_id", referencedColumnName = "endereco_id", nullable = false)
     @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.LAZY)
     private Endereco endereco;
-    
+
     @JsonIgnoreProperties({"numero", "cnpj", "nome", "hibernateLazyInitializer"})
     @JoinColumn(name = "banco_id", referencedColumnName = "banco_id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Banco banco;
-    
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "agencia", fetch = FetchType.LAZY)
     private List<Conta> contas;
-    
+
     public Agencia() {}
 
     public Long getId() {
