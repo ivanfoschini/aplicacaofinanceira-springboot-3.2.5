@@ -1,9 +1,9 @@
 # Data source
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-cpd26g0cmk4c73dq3bn0-a.oregon-postgres.render.com:5432/aplicacao_financeira_prd
-    username: aplicacao_financeira_prd_user
-    password: KDQa7slTie3kOcAfqvSnizus0X2eOLHF
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     initialization-mode: always
 
   # Database
