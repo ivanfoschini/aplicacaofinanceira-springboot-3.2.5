@@ -119,7 +119,6 @@ class DeleteBancoIntegrationTest extends IntegrationTestUtil {
         mockMvc
             .perform(delete(uri, id)
                     .header(IntegrationTestUtil.TOKEN, securityService.generateToken(IntegrationTestUtil.ADMIN)))
-            .andExpect(status().isNoContent())
-            .andReturn();
+            .andExpect(status().isNoContent());
     }
 }
