@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class EstadoService {
 
     @Autowired
@@ -22,7 +21,8 @@ public class EstadoService {
     @Autowired
     private MessageSource messageSource;
 
-    public void delete(long id) throws NotEmptyCollectionException,  NotFoundException {
+    @Transactional
+        public void delete(long id) throws NotEmptyCollectionException,  NotFoundException {
         Estado estado = findById(id);
 
         if (!estado.getCidades().isEmpty()) {
@@ -43,6 +43,7 @@ public class EstadoService {
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("estadoNaoEncontrado", null, null)));
     }
 
+    @Transactional
     public Estado save(Estado estado) throws NotUniqueException {
         if (estadoRepository.findByNome(estado.getNome()) != null) {
             throw new NotUniqueException(messageSource.getMessage("estadoNomeDeveSerUnico", null, null));
@@ -51,6 +52,7 @@ public class EstadoService {
         return estadoRepository.save(estado);
     }
 
+    @Transactional
     public Estado update(long id, Estado estado) throws NotFoundException, NotUniqueException {
         Estado estadoToUpdate = findById(id);
 

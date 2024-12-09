@@ -20,7 +20,9 @@ public interface BancoSwagger {
     // DeleteSwagger
     @Operation(summary = "Exclui um banco",
             parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
-                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
+                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true),
+                    @Parameter(name = "id", description = "Identificador do banco",
+                            in = ParameterIn.PATH, required = true)})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Banco excluído com sucesso",
                     content = @Content(mediaType = "application/json"))
@@ -83,7 +85,9 @@ public interface BancoSwagger {
     // UpdateSwagger
     @Operation(summary = "Altera os dados de um banco",
             parameters = { @Parameter(name = "token", description = "Token JWT de acesso obtido no login",
-                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true)})
+                    in = ParameterIn.HEADER, schema = @Schema(implementation = String.class), required = true),
+                    @Parameter(name = "id", description = "Identificador do banco",
+                            in = ParameterIn.PATH, required = true)})
     @RequestBody(content = { @Content(mediaType = "application/json",
             examples = @ExampleObject(value = "{ \"numero\": 10, \"cnpj\": \"00000000000191\", \"nome\": \"Banco do Brasil\" }"),
             schema = @Schema(implementation = Banco.class)) })
