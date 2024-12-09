@@ -1,6 +1,7 @@
 package br.ufscar.dc.latosensu.aplicacaofinanceira.swagger;
 
 import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.LoginDTO;
+import br.ufscar.dc.latosensu.aplicacaofinanceira.datatransferobject.TokenDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -23,7 +24,7 @@ public interface LoginSwagger {
             @ApiResponse(responseCode = "200", description = "Token de acesso",
                     content = { @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = "{ \"token\": \"eyJhbGciOiJIUzI1NiJ9...\" }"),
-                            schema = @Schema(implementation = LoginDTO.class)) })
+                            schema = @Schema(implementation = TokenDTO.class)) })
     })
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
