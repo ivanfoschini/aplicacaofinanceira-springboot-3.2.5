@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class ClientePessoaJuridicaService {
 
     @Autowired
@@ -30,6 +29,7 @@ public class ClientePessoaJuridicaService {
     @Autowired
     private MessageSource messageSource;
 
+    @Transactional
     public void delete(long id) throws NotFoundException {
         ClientePessoaJuridica clientePessoaJuridica = findById(id);
 
@@ -51,6 +51,7 @@ public class ClientePessoaJuridicaService {
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("clienteNaoEncontrado", null, null)));
     }
 
+    @Transactional
     public ClientePessoaJuridica save(ClientePessoaJuridica clientePessoaJuridica) throws EmptyCollectionException, NotFoundException {
         if (clientePessoaJuridica.getEnderecos().isEmpty()) {
             throw new EmptyCollectionException(messageSource.getMessage("clienteSemEnderecos", null, null));
@@ -68,6 +69,7 @@ public class ClientePessoaJuridicaService {
         return savedClientePessoaJuridica;
     }
 
+    @Transactional
     public ClientePessoaJuridica update(long id, ClientePessoaJuridica clientePessoaJuridica) throws EmptyCollectionException, NotFoundException {
         if (clientePessoaJuridica.getEnderecos().isEmpty()) {
             throw new EmptyCollectionException(messageSource.getMessage("clienteSemEnderecos", null, null));
