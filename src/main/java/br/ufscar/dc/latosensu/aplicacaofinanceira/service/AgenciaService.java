@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class AgenciaService {
 
     @Autowired
@@ -28,6 +27,7 @@ public class AgenciaService {
     @Autowired
     private MessageSource messageSource;
 
+    @Transactional
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Agencia agencia = findById(id);
 
@@ -49,6 +49,7 @@ public class AgenciaService {
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("agenciaNaoEncontrada", null, null)));
     }
 
+    @Transactional
     public Agencia save(Agencia agencia) throws NotFoundException, NotUniqueException {
         bancoService.findById(agencia.getBanco().getId());
         cidadeService.findById(agencia.getEndereco().getCidade().getId());
@@ -60,6 +61,7 @@ public class AgenciaService {
         return agenciaRepository.save(agencia);
     }
 
+    @Transactional
     public Agencia update(long id, Agencia agencia) throws NotFoundException, NotUniqueException {
         bancoService.findById(agencia.getBanco().getId());
         cidadeService.findById(agencia.getEndereco().getCidade().getId());
