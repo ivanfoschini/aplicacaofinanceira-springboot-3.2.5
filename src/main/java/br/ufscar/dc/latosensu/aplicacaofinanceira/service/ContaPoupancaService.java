@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class ContaPoupancaService {
     
     @Autowired
@@ -23,7 +22,8 @@ public class ContaPoupancaService {
 
     @Autowired
     private MessageSource messageSource;
-    
+
+    @Transactional
     public void delete(long id) throws NotFoundException {
         ContaPoupanca contaPoupanca = findById(id);
 
@@ -40,7 +40,8 @@ public class ContaPoupancaService {
         return contaPoupancaRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("contaNaoEncontrada", null, null)));
     }
-    
+
+    @Transactional
     public ContaPoupanca save(ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
         agenciaService.findById(contaPoupanca.getAgencia().getId());
         
@@ -51,6 +52,7 @@ public class ContaPoupancaService {
         return contaPoupancaRepository.save(contaPoupanca);
     }
 
+    @Transactional
     public ContaPoupanca update(long id, ContaPoupanca contaPoupanca) throws NotFoundException, NotUniqueException {
         agenciaService.findById(contaPoupanca.getAgencia().getId());
         
