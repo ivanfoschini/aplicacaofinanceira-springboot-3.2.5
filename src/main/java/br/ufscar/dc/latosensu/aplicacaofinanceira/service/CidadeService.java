@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class CidadeService {
 
     @Autowired
@@ -25,6 +24,7 @@ public class CidadeService {
     @Autowired
     private MessageSource messageSource;
 
+    @Transactional
     public void delete(long id) throws NotEmptyCollectionException, NotFoundException {
         Cidade cidade = findById(id);
 
@@ -46,6 +46,7 @@ public class CidadeService {
                 .orElseThrow(() -> new NotFoundException(messageSource.getMessage("cidadeNaoEncontrada", null, null)));
     }
 
+    @Transactional
     public Cidade save(Cidade cidade) throws NotFoundException, NotUniqueException {
         estadoService.findById(cidade.getEstado().getId());
 
@@ -56,6 +57,7 @@ public class CidadeService {
         return cidadeRepository.save(cidade);
     }
 
+    @Transactional
     public Cidade update(long id, Cidade cidade) throws NotFoundException, NotUniqueException {
         estadoService.findById(cidade.getEstado().getId());
 
