@@ -35,6 +35,7 @@ public class CorrentistaService {
     @Autowired
     private MessageSource messageSource;
 
+    @Transactional
     public List<Correntista> associate(CorrentistaDTO correntistaDTO) throws HttpMessageNotReadableException, MoreThanOneAccountClientException, MoreThanOneAccountOwnershipException, NoAccountOwnershipException, NotFoundException {
         List<Correntista> correntistas = new ArrayList<>();
         Conta conta = contaService.findById(correntistaDTO.getContaId());
