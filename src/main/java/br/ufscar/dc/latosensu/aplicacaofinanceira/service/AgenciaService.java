@@ -5,9 +5,13 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotFoundException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.repository.AgenciaRepository;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +42,17 @@ public class AgenciaService {
         agenciaRepository.delete(agencia);
     }
 
-    public List<Agencia> findAll() {
-        List<Agencia> agencias = agenciaRepository.findAll(Sort.by("nome"));
+    public Map<String, Object> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nome"));
+        Page<Agencia> agenciaPages = agenciaRepository.findAll(pageable);
 
-        return agencias;
+        Map<String, Object> paginationResponseMap = new LinkedHashMap<>();
+        paginationResponseMap.put("agencias", agenciaPages.getContent());
+        paginationResponseMap.put("currentPage", agenciaPages.getNumber());
+        paginationResponseMap.put("totalItems", agenciaPages.getTotalElements());
+        paginationResponseMap.put("totalPages", agenciaPages.getTotalPages());
+
+        return paginationResponseMap;
     }
 
     public Agencia findById(long id) throws NotFoundException {
