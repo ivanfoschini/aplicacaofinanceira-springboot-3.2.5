@@ -6,6 +6,8 @@ import br.ufscar.dc.latosensu.aplicacaofinanceira.exception.NotUniqueException;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.model.Agencia;
 import br.ufscar.dc.latosensu.aplicacaofinanceira.service.AgenciaService;
 import java.util.List;
+import java.util.Map;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,8 +37,9 @@ public class AgenciaController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Agencia>> findAll() {
-        List<Agencia> agencias = agenciaService.findAll();
+    public ResponseEntity<Map<String, Object>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "3") int size) {
+        Map<String, Object> agencias = agenciaService.findAll(page, size);
 
         return new ResponseEntity<>(agencias, HttpStatus.OK);
     }
